@@ -1,0 +1,213 @@
+{% include 'alumni/alumni_base.html' %}
+
+{% block content %}
+  <main class="p-4 sm:ml-64 overflow-auto">
+    <h1 class="px-2 text-2xl font-bold text-blue-500 dark:text-white">Alumni Dashboard</h1>
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2">
+      <a href="#" class="pl-2">Home</a>
+      <p class="text-2xl">
+        &triangleright;
+      </p>
+      <a href="#">Dashboard</a>
+    </div>
+    {% include 'alumni/alumni_search_bar.html' %}
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-2 border-0 sm:gap-4 gap-2 p-2">
+      <article class="rounded-lg border border-gray-100 bg-white dark:bg-gray-800 p-4 drop-shadow-lg">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-500 dark:text-slate-200">
+              Jumlah Seluruh Alumni
+            </p>
+
+            <p class="text-2xl font-medium text-gray-900 dark:text-slate-200">
+              {{object_list.count}}
+            </p>
+          </div>
+
+          <span class="rounded-full bg-blue-100 p-3 text-blue-600">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
+            </svg>            
+          </span>
+        </div>
+
+        <div class="mt-1 flex gap-1 text-green-600 items-center">
+          <p class="flex gap-2 text-sm">
+            <span class="font-bold">{{jumlah_alumni_putra.count}}</span>
+            <span class="text-gray-500 dark:text-slate-200">Putra</span>
+          </p>
+        </div>
+        <div class="mt-1 flex gap-1 text-red-600">
+          <p class="flex gap-2 text-sm">
+            <span class="font-bold">{{jumlah_alumni_putri.count}}</span>
+            <span class="text-gray-500 dark:text-slate-200">Putri</span>
+          </p>
+        </div>
+      </article>
+      <article class="rounded-lg border border-gray-100 bg-white dark:bg-gray-800 p-4 drop-shadow-lg">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-500 dark:text-slate-200">
+              Jumlah Alumni Tahun ini
+            </p>
+
+            <p class="text-2xl font-medium text-gray-900 dark:text-slate-200">
+              {{jumlah_alumni_tahun_ini.count}}
+            </p>
+          </div>
+
+          <span class="rounded-full bg-blue-100 p-3 text-blue-600">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
+            </svg>            
+          </span>
+        </div>
+
+        <div class="mt-1 flex gap-1 text-green-600">
+          <p class="flex gap-2 text-sm">
+            <span class="font-medium">{{jumlah_alumni_putra_tahun_ini.count}}</span>
+            <span class="text-gray-500 dark:text-slate-200">Putra</span>
+          </p>
+        </div>
+        <div class="mt-1 flex gap-1 text-red-600">
+          <p class="flex gap-2 text-sm">
+            <span class="font-medium">{{jumlah_alumni_putri_tahun_ini.count}}</span>
+            <span class="text-gray-500 dark:text-slate-200">Putri</span>
+          </p>
+        </div>
+      </article>
+      <article class="rounded-lg border border-gray-100 bg-white dark:bg-gray-800 p-4 drop-shadow-lg">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-500 dark:text-slate-200">
+              Lulusan Perguruan Tinggi
+            </p>
+
+            <p class="text-2xl font-medium text-gray-900 dark:text-slate-200">
+              {{jumlah_alumni_universitas.count}}
+            </p>
+          </div>
+
+          <span class="rounded-full bg-blue-100 p-3 text-blue-600">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
+            </svg>            
+          </span>
+        </div>
+
+        <div class="mt-1 flex gap-1 text-green-600">
+          <p class="flex gap-2 text-sm">
+            <span class="font-medium">{{jumlah_alumni_putra_universitas.count}}</span>
+            <span class="text-gray-500 dark:text-slate-200">Putra</span>
+          </p>
+        </div>
+        <div class="mt-1 flex gap-1 text-red-600">
+          <p class="flex gap-2 text-sm">
+            <span class="font-medium">{{jumlah_alumni_putri_universitas.count}}</span>
+            <span class="text-gray-500 dark:text-slate-200">Putri</span>
+          </p>
+        </div>
+      </article>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3">
+      <div class="col-span-2">
+        <!-- Analytics Charts -->
+        <div class="px-4 pb-16 mx-2 my-2 pt-4 bg-white dark:bg-slate-800 rounded-md shadow-lg overflow-auto">
+          <p class="text-center">Grafik Sebaran Perguruan Tinggi S1</p>
+          <div class="flex flex-col">
+            {% for object in sebaran_universitas_sarjana %}
+            <div class="flex border-gray-600 dark:border-white">
+              <p class="p-2 text-xs w-1/2 text-end">{{object.undergraduate_university}}</p>
+              <div class="py-2 border-l flex-col justify-end items-center relative">
+                <canvas width="{{object.dcount}}0px" class="bg-indigo-500 h-5"></canvas>
+              </div>
+              <p class="p-2 text-xs">{{object.dcount}}</p>
+            </div>
+            {% empty %}
+            <p class="text-xl text-red-500 font-bold text-center">Maaf, belum ada data.</p>
+            {% endfor %}
+          </div>
+        </div>
+        <!-- Analytics Charts -->
+        <div class="px-4 pb-16 mx-2 my-2 pt-4 bg-white dark:bg-slate-800 rounded-md shadow-lg overflow-auto">
+          <p class="text-center">Grafik Sebaran Perguruan Tinggi S2</p>
+          <div class="flex flex-col">
+            {% for object in sebaran_universitas_magister %}
+            <div class="flex border-gray-600 dark:border-white">
+              <p class="p-2 text-xs w-1/2 text-end">{{object.postgraduate_university}}</p>
+              <div class="py-2 border-l flex-col justify-end items-center relative">
+                <canvas width="{{object.dcount}}0px" class="bg-indigo-500 h-5"></canvas>
+              </div>
+              <p class="p-2 text-xs">{{object.dcount}}</p>
+            </div>
+            {% empty %}
+            <p class="text-xl text-red-500 font-bold text-center">Maaf, belum ada data.</p>
+            {% endfor %}
+          </div>
+        </div>
+        <!-- Analytics Charts -->
+        <div class="px-4 pb-16 mx-2 my-2 pt-4 bg-white dark:bg-slate-800 rounded-md shadow-lg overflow-auto">
+          <p class="text-center">Grafik Sebaran Perguruan Tinggi S3</p>
+          <div class="flex flex-col">
+            {% for object in sebaran_universitas_doktoral %}
+            <div class="flex border-gray-600 dark:border-white">
+              <p class="p-2 text-xs w-1/2 text-end">{{object.doctoral_university}}</p>
+              <div class="py-2 border-l flex-col justify-end items-center relative">
+                <canvas width="{{object.dcount}}0px" class="bg-indigo-500 h-5"></canvas>
+              </div>
+              <p class="p-2 text-xs">{{object.dcount}}</p>
+            </div>
+            {% empty %}
+            <p class="text-xl text-red-500 font-bold text-center">Maaf, belum ada data.</p>
+            {% endfor %}
+          </div>
+        </div>
+        
+        <!-- Analytics Table -->
+        <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg">
+          {% if object_list %}
+          <table class="table-auto border-collapse w-full">
+            <caption class="p-2">Tabel Sebaran Wilayah Alumni</caption>
+            <thead>
+              <th class="p-2 border border-gray-400">No.</th>
+              <th class="p-2 border border-gray-400">Provinsi</th>
+              <th class="p-2 border border-gray-400">Kota/Kab</th>
+              <th class="p-2 border border-gray-400">Jumlah</th>
+            </thead>
+            <tbody>
+              {% for object in sebaran_wilayah %}
+              <tr>
+                <td class="p-2 border border-gray-400">{{forloop.counter}}</td>
+                <td class="p-2 border border-gray-400">{{object.province}}</td>
+                <td class="p-2 border border-gray-400">{{object.city}}</td>
+                <td class="p-2 border border-gray-400">{{object.dcount}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <p class="text-xl text-red-500 font-bold text-center">Maaf, belum ada data.</p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="px-4 pb-16 mx-2 my-2 pt-4 bg-white dark:bg-slate-800 rounded-md shadow-lg overflow-auto relative">
+        <p class="text-center pb-4">Aktivitas Terbaru</p>
+        {% for log in logs %}
+        <div class="">
+          <p class="text-xs w-1/2">&bullet; {{log.created_at|timesince}} ago</p>
+          <div class="p-2 border-l-2">
+            <p class="text-xs">{{log.message}}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </main>
+  {% endblock content %}

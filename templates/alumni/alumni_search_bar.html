@@ -1,0 +1,7 @@
+<!-- Search Card -->
+<div class="m-2 py-2 flex md:justify-end justify-center text-black">
+    <form action="{% url 'alumni:alumni-search' %}" method="get" role="search" class="flex md:w-1/2 w-full gap-2 justify-between">
+      <input type="search" name="query" id="search" placeholder="Cari nama atau NIS alumni ..." class="py-1 px-2 rounded-lg shadow-lg w-3/4 border border-blue-500" required>
+      <input type="submit" value="Cari Data" class="py-1 px-2 font-semibold text-white bg-blue-500 rounded-lg cursor-pointer w-1/4">
+    </form>
+  </div>
