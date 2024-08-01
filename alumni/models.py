@@ -54,3 +54,27 @@ class Alumni(models.Model):
         indexes = [
             models.Index(fields=["id", "name"]),
         ]
+
+
+
+class Files(models.Model):
+    file = models.FileField(upload_to='files', help_text="Format foto .jpg/.jpeg", verbose_name=_("File (Excel)"))
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.file}"
+    
+
+    def get_absolute_url(self):
+        return reverse("alumni:alumni-quick-upload")
+    
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = _("File")
+        verbose_name_plural = _("Files")
+        db_table = "files"
+        indexes = [
+            models.Index(fields=["id",]),
+        ]

@@ -1,5 +1,5 @@
 from django import forms
-from alumni.models import Alumni
+from alumni.models import Alumni, Files
 
 class AlumniForm(forms.ModelForm):
     class Meta:
@@ -35,4 +35,13 @@ class AlumniForm(forms.ModelForm):
             "father_name" : forms.TextInput(attrs={"class": "rounded-md text-black px-2 py-1 border-2 border-blue-500 dark:border-none shadow-lg"}),
             "mother_name" : forms.TextInput(attrs={"class": "rounded-md text-black px-2 py-1 border-2 border-blue-500 dark:border-none shadow-lg"}),
             "family_phone" : forms.TextInput(attrs={"class": "rounded-md text-black px-2 py-1 border-2 border-blue-500 dark:border-none shadow-lg"}),
+        }
+
+
+class FilesForm(forms.ModelForm):
+    class Meta:
+        model = Files
+        fields = '__all__'
+        widgets = {
+            "file" : forms.FileInput(attrs={"accept": ".xlsx, .xls", "class": "rounded-md text-black px-2 py-1 border-2 border-blue-500 dark:border-none shadow-lg"}),
         }

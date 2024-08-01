@@ -1,18 +1,19 @@
 from typing import Any
 from django.db.models.query import QuerySet
 from django.forms import BaseModelForm
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count
 from django.urls import reverse_lazy
-from alumni.models import Alumni
-from alumni.forms import AlumniForm
+from alumni.models import Alumni, Files
+from alumni.forms import AlumniForm, FilesForm
 from django.utils import timezone
 from utils.whatsapp import send_whatsapp_humas
 from userlog.models import UserLog
-
+from pandas import read_excel
+from numpy import int8, strings
 
 class AlumniDashboardView(ListView):
     model = Alumni
@@ -88,8 +89,9 @@ class AlumniCreateView(LoginRequiredMixin, CreateView):
         return c
 
 class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
-    model = Alumni
-    form_class = AlumniForm
+    model = Files
+    form_class = FilesForm
+    template_name = 'alumni/alumni_quick_form.html'
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_superuser:
@@ -98,14 +100,42 @@ class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save()
-        send_whatsapp_humas(self.request.user.teacher.no_hp, "Input", f"{self.object.name}", f"angkatan {self.object.group}")
-        UserLog.objects.create(
-            user = self.request.user.teacher,
-            action_flag = "INPUT",
-            app = "Alumni",
-            message = f"{self.request.user.teacher} berhasil input data alumni atas nama {self.object.name} angkatan {self.object.group}"
-        )
-        return super().form_valid(form)
+        df = read_excel(self.object.file, na_filter=False)
+        row, _ = df.shape
+        for i in range(row):
+            Alumni.objects.create(
+                id = i + 1,
+                nis = df.iloc[i, 0],
+                nisn = df.iloc[i, 1],
+                name = df.iloc[i, 2],
+                group = df.iloc[i, 3],
+                birth_place = df.iloc[i, 4],
+                birth_date = df.iloc[i, 5],
+                gender = df.iloc[i, 6],
+                address = df.iloc[i, 7],
+                city = df.iloc[i, 8],
+                province = df.iloc[i, 9],
+                state = df.iloc[i, 10],
+                phone = df.iloc[i, 11],
+                last_class = df.iloc[i, 12],
+                graduate_year = df.iloc[i, 13],
+                undergraduate_department = df.iloc[i, 14],
+                undergraduate_university = df.iloc[i, 15],
+                undergraduate_university_entrance = df.iloc[i, 16],
+                postgraduate_department = df.iloc[i, 17],
+                postgraduate_university = df.iloc[i, 18],
+                postgraduate_university_entrance = df.iloc[i, 19],
+                doctoral_department = df.iloc[i, 20],
+                doctoral_university = df.iloc[i, 21],
+                doctoral_university_entrance = df.iloc[i, 22],
+                job = df.iloc[i, 23],
+                company_name = df.iloc[i, 24],
+                married = df.iloc[i, 25],
+                father_name = df.iloc[i, 26],
+                mother_name = df.iloc[i, 27],
+                family_phone = df.iloc[i, 28],
+            )
+        return HttpResponseRedirect(self.get_success_url())
 
 class AlumniDetailView(LoginRequiredMixin, DetailView):
     model = Alumni
@@ -153,12 +183,12 @@ class AlumniDeleteView(LoginRequiredMixin, DeleteView):
     
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.object = form.save()
-        send_whatsapp_humas(self.request.user.teacher.no_hp, "Hapus", f"{self.object.name}", f"angkatan {self.object.group}")
+        self.obj = self.get_object()
+        send_whatsapp_humas(self.request.user.teacher.no_hp, "Hapus", f"{self.obj.name}", f"angkatan {self.obj.group}")
         UserLog.objects.create(
             user = self.request.user.teacher,
             action_flag = "HAPUS",
             app = "Alumni",
-            message = f"{self.request.user.teacher} berhasil hapus data alumni atas nama {self.object.name} angkatan {self.object.group}"
+            message = f"{self.request.user.teacher} berhasil hapus data alumni atas nama {self.obj.name} angkatan {self.obj.group}"
         )
         return super().form_valid(form)
