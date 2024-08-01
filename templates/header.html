@@ -1,5 +1,5 @@
 <header class="bg-blue-500 dark:bg-gray-800 ring-2 ring-blue-500 dark:ring-gray-800 w-full z-20 sticky left-0 top-0">
-  <nav class="backdrop-blur-sm mx-auto flex items-center justify-end sm:justify-between p-4 lg:px-8"
+  <nav class="mx-2 backdrop-blur-sm flex items-center justify-between p-4 lg:px-8"
     aria-label="Global">
     <div class="flex lg:flex-1">
       <a href="{% url 'app-index' %}" class="-m-1.5 p-1.5">
@@ -9,7 +9,7 @@
     </div>
     <div class="flex lg:hidden items-center">
       <label for="AcceptConditions2"
-        class="relative inline-block h-6 w-12 mx-4 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500">
+        class="relative inline-block h-6 w-12 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500">
         <label for="AcceptConditions2"></label><input type="checkbox" id="AcceptConditions2"
           class="peer sr-only [&:checked_+_span_svg[data-checked-icon]]:block [&:checked_+_span_svg[data-unchecked-icon]]:hidden" />
 
@@ -28,12 +28,14 @@
         </span>
       </label>
       {% if request.user.is_authenticated %}
+      <a href="{% url 'app-index' %}" class="mx-4 text-sm font-semibold leading-6 text-gray-100 px-2 border rounded-md">Home</a>
       <div class="rounded-full border-2 border-white mr-4 dark:border-fuchsia-400">
         <img class="rounded-full" src="{{ request.user.teacher.foto.url }}" alt="Profile" height="25px"
           width="25px" />
       </div>
       {% else %}
-      <a href="{% url 'login' %}" class="text-sm font-semibold leading-6 text-gray-100 px-2">Masuk
+      <a href="{% url 'app-index' %}" class="mx-4 text-sm font-semibold leading-6 text-gray-100 px-2 border rounded-md">Home</a>
+      <a href="{% url 'login' %}" class="mx-4 text-sm font-semibold leading-6 text-gray-100 px-2">
         <span aria-hidden="true">&rarr;</span></a>
       {% endif %}
       <button type="button" class="-m-2.5 items-center justify-center rounded-md p-2.5 text-gray-700"
@@ -56,7 +58,7 @@
 
     <div class="hidden lg:flex lg:flex-1 lg:justify-end items-center">
       <label for="AcceptConditions"
-        class="relative inline-block h-6 w-12 mx-4 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500">
+        class="relative inline-block h-6 w-12 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500">
         <label for="AcceptConditions"></label><input type="checkbox" id="AcceptConditions"
           class="peer sr-only [&:checked_+_span_svg[data-checked-icon]]:block [&:checked_+_span_svg[data-unchecked-icon]]:hidden" />
 
@@ -75,11 +77,13 @@
         </span>
       </label>
       {% if request.user.is_authenticated %}
+      <a href="{% url 'app-index' %}" class="mx-4 text-sm font-semibold leading-6 text-gray-100 px-2 border rounded-md">Home</a>
       <div class="rounded-full border-2 border-white mr-4 dark:border-fuchsia-400">
         <img class="rounded-full" src="{{ request.user.teacher.foto.url }}" alt="Profile" height="25px"
           width="25px" />
       </div>
       {% else %}
+      <a href="{% url 'app-index' %}" class="mx-4 text-sm font-semibold leading-6 text-gray-100 px-2 border rounded-md">Home</a>
       <a href="{% url 'login' %}" class="text-sm font-semibold leading-6 text-gray-100 px-2">Masuk
         <span aria-hidden="true">&rarr;</span></a>
       {% endif %}

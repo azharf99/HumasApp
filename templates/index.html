@@ -28,7 +28,7 @@
 
 <body class="bg-gray-100 dark:bg-black dark:text-gray-200">
   <header class="bg-indigo-500 dark:bg-gradient-to-r dark:from-slate-900 dark:via-purple-800 dark:to-black w-full sticky top-0">
-    <nav class="backdrop-blur-sm mx-auto flex w-full items-center justify-between p-6 lg:px-8" aria-label="Global">
+    <nav class="backdrop-blur-sm mx-auto flex w-full items-center justify-between p-4 lg:px-8" aria-label="Global">
       <div class="flex lg:flex-1">
         <a href="{% url 'app-index' %}" class="-m-1.5 p-1.5">
           <span class="sr-only">HUMAS - SMAS IT AL BINAA</span>
@@ -37,7 +37,7 @@
       </div>
       <div class="flex lg:hidden items-center">
         <label for="AcceptConditions2"
-              class="relative inline-block h-6 w-12 mx-4 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500">
+              class="relative inline-block h-6 w-12 mx-2 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500">
               <input type="checkbox" id="AcceptConditions2"
                 class="peer sr-only [&:checked_+_span_svg[data-checked-icon]]:block [&:checked_+_span_svg[data-unchecked-icon]]:hidden" />
     
@@ -53,9 +53,12 @@
     
               </span>
         </label>
-        <div class="rounded-full p-1 border-2 border-gray-300 mr-4 dark:border-fuchsia-400 bg-white">
-          <img src="{% static 'images/Binaaul-Mustaqbal.png' %}" alt="Profile" height="25px" width="25px">
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'dashboard' %}" class="text-sm font-semibold leading-6 text-gray-100 px-2 border rounded-md">Dashboard</a>
+        <div class="mx-2 rounded-full p-1 border-2 border-gray-300 dark:border-fuchsia-400 bg-white">
+          <img src="{{request.user.teacher.foto.url}}" alt="Profile" height="25px" width="25px">
         </div>
+        {% endif %}
         <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
           id="openMobileNav">
           <span class="sr-only">Open main menu</span>
