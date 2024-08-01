@@ -151,6 +151,7 @@ class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
 class AlumniCSVQuickUploadView(LoginRequiredMixin, CreateView):
     model = CSVFiles
     form_class = CSVFilesForm
+    template_name = 'alumni/files_form.html'
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_superuser:
