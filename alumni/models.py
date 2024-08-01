@@ -34,6 +34,7 @@ class Alumni(models.Model):
     father_name = models.CharField(_("Nama Ayah"), max_length=255, blank=True, null=True)
     mother_name = models.CharField(_("Nama Ibu"), max_length=255, blank=True, null=True)
     family_phone = models.CharField(_("Telpon Orang Tua"), max_length=255, blank=True, null=True)
+    photo = models.ImageField(_("Foto Alumni"), upload_to='alumni', blank=True, null=True, default='blank-profile.png')
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
