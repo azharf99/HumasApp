@@ -1,7 +1,6 @@
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.utils import timezone
 
 # Create your models here.
 
@@ -58,7 +57,7 @@ class Alumni(models.Model):
 
 
 class Files(models.Model):
-    file = models.FileField(upload_to='files', help_text="Format foto .jpg/.jpeg", verbose_name=_("File (Excel)"))
+    file = models.FileField(upload_to='files/excel', help_text="Format .xlsx", verbose_name=_("File (Excel)"))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -75,6 +74,28 @@ class Files(models.Model):
         verbose_name = _("File")
         verbose_name_plural = _("Files")
         db_table = "files"
+        indexes = [
+            models.Index(fields=["id",]),
+        ]
+
+class CSVFiles(models.Model):
+    file = models.FileField(upload_to='files/csv', help_text="Format .csv", verbose_name=_("File (CSV)"))
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.file}"
+    
+
+    def get_absolute_url(self):
+        return reverse("alumni:alumni-quick-upload-csv")
+    
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = _("CSV_File")
+        verbose_name_plural = _("CSV_Files")
+        db_table = "csv_files"
         indexes = [
             models.Index(fields=["id",]),
         ]

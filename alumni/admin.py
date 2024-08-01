@@ -1,8 +1,10 @@
 from django.contrib import admin
-from alumni.models import Alumni
+from alumni.models import Alumni, Files, CSVFiles
 
 # Register your models here.
 admin.site.register(Alumni)
+admin.site.register(Files)
+admin.site.register(CSVFiles)
 
 
 from django.contrib.flatpages.admin import FlatPageAdmin

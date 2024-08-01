@@ -7,13 +7,12 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count
 from django.urls import reverse_lazy
-from alumni.models import Alumni, Files
-from alumni.forms import AlumniForm, FilesForm
+from alumni.models import Alumni, Files, CSVFiles
+from alumni.forms import AlumniForm, FilesForm, CSVFilesForm
 from django.utils import timezone
 from utils.whatsapp import send_whatsapp_humas
 from userlog.models import UserLog
-from pandas import read_excel
-from numpy import int8, strings
+from pandas import read_excel, read_csv
 
 class AlumniDashboardView(ListView):
     model = Alumni
@@ -91,7 +90,6 @@ class AlumniCreateView(LoginRequiredMixin, CreateView):
 class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
     model = Files
     form_class = FilesForm
-    template_name = 'alumni/alumni_quick_form.html'
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_superuser:
@@ -103,40 +101,108 @@ class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
         df = read_excel(self.object.file, na_filter=False)
         row, _ = df.shape
         for i in range(row):
-            Alumni.objects.create(
-                id = i + 1,
+            Alumni.objects.update_or_create(
                 nis = df.iloc[i, 0],
                 nisn = df.iloc[i, 1],
                 name = df.iloc[i, 2],
-                group = df.iloc[i, 3],
-                birth_place = df.iloc[i, 4],
-                birth_date = df.iloc[i, 5],
-                gender = df.iloc[i, 6],
-                address = df.iloc[i, 7],
-                city = df.iloc[i, 8],
-                province = df.iloc[i, 9],
-                state = df.iloc[i, 10],
-                phone = df.iloc[i, 11],
-                last_class = df.iloc[i, 12],
-                graduate_year = df.iloc[i, 13],
-                undergraduate_department = df.iloc[i, 14],
-                undergraduate_university = df.iloc[i, 15],
-                undergraduate_university_entrance = df.iloc[i, 16],
-                postgraduate_department = df.iloc[i, 17],
-                postgraduate_university = df.iloc[i, 18],
-                postgraduate_university_entrance = df.iloc[i, 19],
-                doctoral_department = df.iloc[i, 20],
-                doctoral_university = df.iloc[i, 21],
-                doctoral_university_entrance = df.iloc[i, 22],
-                job = df.iloc[i, 23],
-                company_name = df.iloc[i, 24],
-                married = df.iloc[i, 25],
-                father_name = df.iloc[i, 26],
-                mother_name = df.iloc[i, 27],
-                family_phone = df.iloc[i, 28],
+                defaults=dict(
+                    nis = df.iloc[i, 0],
+                    nisn = df.iloc[i, 1],
+                    name = df.iloc[i, 2],
+                    group = df.iloc[i, 3],
+                    birth_place = df.iloc[i, 4],
+                    birth_date = df.iloc[i, 5],
+                    gender = df.iloc[i, 6],
+                    address = df.iloc[i, 7],
+                    city = df.iloc[i, 8],
+                    province = df.iloc[i, 9],
+                    state = df.iloc[i, 10],
+                    phone = df.iloc[i, 11],
+                    last_class = df.iloc[i, 12],
+                    graduate_year = df.iloc[i, 13],
+                    undergraduate_department = df.iloc[i, 14],
+                    undergraduate_university = df.iloc[i, 15],
+                    undergraduate_university_entrance = df.iloc[i, 16],
+                    postgraduate_department = df.iloc[i, 17],
+                    postgraduate_university = df.iloc[i, 18],
+                    postgraduate_university_entrance = df.iloc[i, 19],
+                    doctoral_department = df.iloc[i, 20],
+                    doctoral_university = df.iloc[i, 21],
+                    doctoral_university_entrance = df.iloc[i, 22],
+                    job = df.iloc[i, 23],
+                    company_name = df.iloc[i, 24],
+                    married = df.iloc[i, 25],
+                    father_name = df.iloc[i, 26],
+                    mother_name = df.iloc[i, 27],
+                    family_phone = df.iloc[i, 28],
+                )
             )
         return HttpResponseRedirect(self.get_success_url())
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        c = super().get_context_data(**kwargs)
+        c["form_name"] = "Import Excel"
+        return c
+    
 
+class AlumniCSVQuickUploadView(LoginRequiredMixin, CreateView):
+    model = CSVFiles
+    form_class = CSVFilesForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.object = form.save()
+        df = read_csv(self.object.file)
+        row, _ = df.shape
+        for i in range(row):
+            Alumni.objects.update_or_create(
+                nis = df.iloc[i, 0],
+                nisn = df.iloc[i, 1],
+                name = df.iloc[i, 2],
+                defaults=dict(
+                    nis = df.iloc[i, 0],
+                    nisn = df.iloc[i, 1],
+                    name = df.iloc[i, 2],
+                    group = df.iloc[i, 3],
+                    birth_place = df.iloc[i, 4],
+                    birth_date = df.iloc[i, 5],
+                    gender = df.iloc[i, 6],
+                    address = df.iloc[i, 7],
+                    city = df.iloc[i, 8],
+                    province = df.iloc[i, 9],
+                    state = df.iloc[i, 10],
+                    phone = df.iloc[i, 11],
+                    last_class = df.iloc[i, 12],
+                    graduate_year = df.iloc[i, 13],
+                    undergraduate_department = df.iloc[i, 14],
+                    undergraduate_university = df.iloc[i, 15],
+                    undergraduate_university_entrance = df.iloc[i, 16],
+                    postgraduate_department = df.iloc[i, 17],
+                    postgraduate_university = df.iloc[i, 18],
+                    postgraduate_university_entrance = df.iloc[i, 19],
+                    doctoral_department = df.iloc[i, 20],
+                    doctoral_university = df.iloc[i, 21],
+                    doctoral_university_entrance = df.iloc[i, 22],
+                    job = df.iloc[i, 23],
+                    company_name = df.iloc[i, 24],
+                    married = df.iloc[i, 25],
+                    father_name = df.iloc[i, 26],
+                    mother_name = df.iloc[i, 27],
+                    family_phone = df.iloc[i, 28],
+                )
+            )
+        return HttpResponseRedirect(self.get_success_url())
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        c = super().get_context_data(**kwargs)
+        c["form_name"] = "Import CSV"
+        return c
+    
+    
 class AlumniDetailView(LoginRequiredMixin, DetailView):
     model = Alumni
 
