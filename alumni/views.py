@@ -81,6 +81,11 @@ class AlumniCreateView(LoginRequiredMixin, CreateView):
             message = f"{self.request.user.teacher} berhasil input data alumni atas nama {self.object.name} angkatan {self.object.group}"
         )
         return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        c = super().get_context_data(**kwargs)
+        c["form_name"] = "Create"
+        return c
 
 class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
     model = Alumni
@@ -130,6 +135,11 @@ class AlumniUpdateView(LoginRequiredMixin, UpdateView):
             message = f"{self.request.user.teacher} berhasil edit data alumni atas nama {self.object.name} angkatan {self.object.group}"
         )
         return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        c = super().get_context_data(**kwargs)
+        c["form_name"] = "Update"
+        return c
 
 
 class AlumniDeleteView(LoginRequiredMixin, DeleteView):

@@ -23,14 +23,16 @@ from users.views import MyLoginView, MyLogoutView, MyProfileView, MyProfileUpdat
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name="index.html"), name='app-index'),
-    path('admin/', admin.site.urls),
-    path('alumni/', include("alumni.urls")),
-    path('login/', MyLoginView.as_view(), name="login"),
     path('accounts/login/', MyLoginView.as_view(), name="login"),
     path('accounts/profile/', MyProfileView.as_view(), name="profil"),
     path('accounts/profile/<int:pk>/', MyProfileUpdateView.as_view(), name="profil-edit"),
     path('accounts/profile/<int:pk>/', MyProfileUpdateView.as_view(), name="password-edit"),
     path('accounts/logout/', MyLogoutView.as_view(), name="logout"),
+    path('admin/', admin.site.urls),
+    path('alumni/', include("alumni.urls")),
+    path('login/', MyLoginView.as_view(), name="login"),
+    path('private/', include("private.urls")),
+    path('students/', include("students.urls")),
 ]
 
 

@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'alumni',
     'userlog',
     'users',
+    'private',
+    'students',
 ]
 
 MIDDLEWARE = [
