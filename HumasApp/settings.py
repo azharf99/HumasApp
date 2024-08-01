@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['humas.pythonanywhere.com', 'humas.smasitalbinaa.com', '127.0.0.1']
 
 
 ID_DEVICE = os.getenv('ID_DEVICE')
@@ -97,12 +97,18 @@ DATABASES = {
 
 # DATABASES = {
 #         'default':{
-#             'ENGINE': 'django.db.backends.postgresql',
-#             'NAME' : os.getenv('POSTGRES_DB_NAME'),
-#             'USER' : os.getenv('POSTGRES_DB_USER'),
-#             'PASSWORD' : os.getenv('POSTGRES_DB_PASSWORD'),
-#             'HOST' : os.getenv('POSTGRES_DB_HOST'),
-#             'PORT' : os.getenv('POSTGRES_DB_PORT'),
+#             'ENGINE': 'django.db.backends.mysql',
+#             'NAME' : os.getenv('DB_NAME'),
+#             'USER' : os.getenv('DB_USER'),
+#             'PASSWORD' : os.getenv('DB_PASSWORD'),
+#             'HOST' : os.getenv('DB_HOST'),
+#             'PORT' : os.getenv('DB_PORT'),
+#             "OPTIONS": {
+#                 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#                 'charset': 'utf8mb4',
+#                 "autocommit": True,
+#             }
+
 #         }
 #     }
 

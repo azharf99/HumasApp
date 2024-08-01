@@ -82,6 +82,25 @@ class AlumniCreateView(LoginRequiredMixin, CreateView):
         )
         return super().form_valid(form)
 
+class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
+    model = Alumni
+    form_class = AlumniForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.object = form.save()
+        send_whatsapp_humas(self.request.user.teacher.no_hp, "Input", f"{self.object.name}", f"angkatan {self.object.group}")
+        UserLog.objects.create(
+            user = self.request.user.teacher,
+            action_flag = "INPUT",
+            app = "Alumni",
+            message = f"{self.request.user.teacher} berhasil input data alumni atas nama {self.object.name} angkatan {self.object.group}"
+        )
+        return super().form_valid(form)
 
 class AlumniDetailView(LoginRequiredMixin, DetailView):
     model = Alumni

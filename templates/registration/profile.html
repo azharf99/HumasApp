@@ -1,0 +1,46 @@
+{% include 'base.html' %}
+
+{% block content %}
+<main class="p-4 sm:ml-64 overflow-auto">
+    <h1 class="px-2 text-2xl font-bold text-blue-500 dark:text-white">Profile</h1>
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2">
+      <a href="#" class="pl-2">Home</a>
+      <p class="text-2xl">
+        &triangleright;
+      </p>
+      <a href="#">Profile</a>
+    </div>
+    
+    <div class="my-6 grid grid-cols-1 md:grid-cols-3">
+      <div class="m-2 p-4 border bg-white dark:bg-gray-800 rounded-md shadow-lg flex flex-col justify-evenly gap-2">
+        <img src="https://humas.smasitalbinaa.com/static/images/hero.png" alt="Foto" class="rounded-md">
+        <p class="text-xl text-balance text-center font-semibold">{{object_list.nama_guru|default:"-"}}</p>
+        <p class="text-balance text-center">{{object_list.jabatan|default:"-"}}</p>
+        <div class="mt-6 flex justify-center gap-2">
+          <a href="{% url 'profil-edit' request.user.id %}" class="p-2 my-2 bg-lime-300 hover:bg-fuchsia-400 dark:bg-slate-900 border text-center rounded-md">Ubah profil</a>
+          <a href="{% url 'password-edit' request.user.id %}" class="p-2 my-2 bg-lime-300 hover:bg-fuchsia-400 dark:bg-slate-900 border text-center rounded-md">Ubah Password</a>
+        </div>
+      </div>
+      <div class="m-2 p-4 col-span-2 border bg-white dark:bg-gray-800 rounded-md shadow-lg">
+        <p class="mb-3 text-xl font-semibold">Details</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <p class="text-blue-500 dark:text-lime-500 font-bold">Nama Lengkap:</p>
+          <p>{{object_list.nama_guru|default:"-"}}</p>
+          <p class="text-blue-500 dark:text-lime-500 font-bold">NIY:</p>
+          <p>{{object_list.niy|default:"-"}}</p>
+          <p class="text-blue-500 dark:text-lime-500 font-bold">Email:</p>
+          <p>{{object_list.email|default:"-"}}</p>
+          <p class="text-blue-500 dark:text-lime-500 font-bold">No Handphone:</p>
+          <p>{{object_list.no_hp|default:"-"}}</p>
+          <p class="text-blue-500 dark:text-lime-500 font-bold">Jabatan:</p>
+          <p>{{object_list.jabatan|default:"-"}}</p>
+          <p class="text-blue-500 dark:text-lime-500 font-bold">Alamat:</p>
+          <p>{{object_list.alamat|default:"-"}}</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+{% endblock content %}

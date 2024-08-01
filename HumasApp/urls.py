@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from users.views import MyLoginView, MyLogoutView, MyProfileView, MyProfileUpdateView
 
@@ -27,5 +29,10 @@ urlpatterns = [
     path('accounts/login/', MyLoginView.as_view(), name="login"),
     path('accounts/profile/', MyProfileView.as_view(), name="profil"),
     path('accounts/profile/<int:pk>/', MyProfileUpdateView.as_view(), name="profil-edit"),
+    path('accounts/profile/<int:pk>/', MyProfileUpdateView.as_view(), name="password-edit"),
     path('accounts/logout/', MyLogoutView.as_view(), name="logout"),
 ]
+
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

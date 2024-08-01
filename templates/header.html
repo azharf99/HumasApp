@@ -32,10 +32,6 @@
         <img class="rounded-full" src="{{ request.user.teacher.foto.url }}" alt="Profile" height="25px"
           width="25px" />
       </div>
-      <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <input type="submit" value="Keluar &rarr;" class="text-sm font-semibold leading-6 text-gray-100 px-2">
-      </form>
       {% else %}
       <a href="{% url 'login' %}" class="text-sm font-semibold leading-6 text-gray-100 px-2">Masuk
         <span aria-hidden="true">&rarr;</span></a>
@@ -83,10 +79,6 @@
         <img class="rounded-full" src="{{ request.user.teacher.foto.url }}" alt="Profile" height="25px"
           width="25px" />
       </div>
-      <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <input type="submit" value="Keluar &rarr;" class="text-sm font-semibold leading-6 text-gray-100 px-2">
-      </form>
       {% else %}
       <a href="{% url 'login' %}" class="text-sm font-semibold leading-6 text-gray-100 px-2">Masuk
         <span aria-hidden="true">&rarr;</span></a>

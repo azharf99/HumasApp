@@ -11,6 +11,7 @@ from django.db.models.query import QuerySet
 from django.contrib import messages
 from django.template.response import TemplateResponse
 from users.models import Teacher
+from users.forms import ProfileUpdateForm
 from utils.whatsapp import send_whatsapp_login
 from typing import Any
 
@@ -43,7 +44,7 @@ class MyLoginView(LoginView):
 
 class MyProfileView(LoginRequiredMixin, ListView):
     model = Teacher
-    context_object_name = 'teacher'
+    template_name = "registration/profile.html"
 
     def get_queryset(self) -> QuerySet[Any]:
         return get_object_or_404(Teacher, user_id=self.request.user.id)
@@ -55,7 +56,8 @@ class MyProfileView(LoginRequiredMixin, ListView):
 
 class MyProfileUpdateView(LoginRequiredMixin, UpdateView):
     model = Teacher
-    template_name = 'new_profil-edit.html'
+    form_class = ProfileUpdateForm
+    template_name = "registration/profile_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
