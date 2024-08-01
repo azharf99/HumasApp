@@ -1,7 +1,8 @@
+from io import BytesIO
 from typing import Any
 from django.db.models.query import QuerySet
 from django.forms import BaseModelForm
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,9 +11,11 @@ from django.urls import reverse_lazy
 from alumni.models import Alumni, Files, CSVFiles
 from alumni.forms import AlumniForm, FilesForm, CSVFilesForm
 from django.utils import timezone
-from utils.whatsapp import send_whatsapp_humas
+from utils.whatsapp import send_whatsapp_humas, send_whatsapp_input_anggota
 from userlog.models import UserLog
 from pandas import read_excel, read_csv
+from xlsxwriter import Workbook
+from numpy import strings
 
 class AlumniDashboardView(ListView):
     model = Alumni
@@ -98,7 +101,7 @@ class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save()
-        df = read_excel(self.object.file, na_filter=False)
+        df = read_excel(self.object.file, na_filter=False, dtype={"NIS": str, "NISN": str})
         row, _ = df.shape
         for i in range(row):
             Alumni.objects.update_or_create(
@@ -156,7 +159,7 @@ class AlumniCSVQuickUploadView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save()
-        df = read_csv(self.object.file)
+        df = read_csv(self.object.file, na_filter=False, dtype={"NIS": str, "NISN": str})
         row, _ = df.shape
         for i in range(row):
             Alumni.objects.update_or_create(
@@ -201,6 +204,33 @@ class AlumniCSVQuickUploadView(LoginRequiredMixin, CreateView):
         c = super().get_context_data(**kwargs)
         c["form_name"] = "Import CSV"
         return c
+    
+
+class DownloadExcelView(LoginRequiredMixin, ListView):
+    model = Alumni
+    
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        buffer = BytesIO()
+        workbook = Workbook(buffer)
+        worksheet = workbook.add_worksheet()
+        worksheet.write_row(0, 0, ['No', 'NIS', 'NISN', 'Nama', 'Angkatan', 'Tahun Lulus'])
+        row = 1
+        for data in self.get_queryset():
+            worksheet.write_row(row, 0, [row, f"{data.nis}", f"{data.nisn}", data.name, data.group, data.graduate_year])
+            row += 1
+        worksheet.autofit()
+        workbook.close()
+        buffer.seek(0)
+
+        UserLog.objects.create(
+            user=request.user.teacher,
+            action_flag="DOWNLOAD",
+            app="ALUMNI",
+            message="Berhasil download daftar alumni dalam format Excel"
+        )
+        # send_whatsapp_input_anggota(request.user.teacher.no_hp, 'ekskul/SC', 'Nilai', 'nilai', 'download')
+
+        return FileResponse(buffer, as_attachment=True, filename='Daftar Alumni SMA IT Al Binaa.xlsx')
     
     
 class AlumniDetailView(LoginRequiredMixin, DetailView):
