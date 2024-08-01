@@ -20,6 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from users.views import MyLoginView, MyLogoutView, MyProfileView, MyProfileUpdateView
+from alumni.views import AlumniDashboardView
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name="index.html"), name='app-index'),
@@ -30,6 +31,7 @@ urlpatterns = [
     path('accounts/logout/', MyLogoutView.as_view(), name="logout"),
     path('admin/', admin.site.urls),
     path('alumni/', include("alumni.urls")),
+    path('dashboard/', AlumniDashboardView.as_view(), name="dashboard"),
     path('login/', MyLoginView.as_view(), name="login"),
     path('private/', include("private.urls")),
     path('students/', include("students.urls")),

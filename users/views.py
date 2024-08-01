@@ -6,7 +6,7 @@ from django.views.generic import ListView, UpdateView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
 from django.db.models.query import QuerySet
 from django.contrib import messages
 from django.template.response import TemplateResponse
@@ -59,11 +59,10 @@ class MyProfileUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ProfileUpdateForm
     template_name = "registration/profile_form.html"
 
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            if request.user.is_superuser or request.user.id != self.kwargs.get("pk"):
-                return self.handle_no_permission()
-        return super().dispatch(request, *args, **kwargs)
+    def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        if self.kwargs.get("pk") != request.user.id:
+            return HttpResponseForbidden("Maaf, anda tidak diizinkan mengubah data profil orang lain atau link yang anda masukan salah!")
+        return super().get(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
