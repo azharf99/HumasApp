@@ -13,7 +13,7 @@ class Class(models.Model):
         return f"{self.nama_kelas} | {self.tahun_ajaran}"
 
     def get_absolute_url(self):
-        return reverse("data-santri")
+        return reverse("student:class-index")
 
     class Meta:
         ordering = ["nama_kelas"]
@@ -44,7 +44,7 @@ class Student(models.Model):
         return f"{self.kelas} | {self.nama_siswa}"
 
     def get_absolute_url(self):
-        return reverse("data-santri")
+        return reverse("student:student-index")
 
     class Meta:
         ordering = ["kelas", "nama_siswa"]

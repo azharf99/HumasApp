@@ -9,6 +9,10 @@
       <p class="text-2xl">
         &triangleright;
       </p>
+      <a href="{% url 'student:class-index' %}">Class List</a>
+      <p class="text-2xl">
+        &triangleright;
+      </p>
       {% if form_name == "Create" %}
       <a href="{% url 'student:class-create' %}">Class {{form_name}} Form</a>
       {% else %}
@@ -19,12 +23,17 @@
     <div class="mx-2 my-4 flex justify-center">
         <div class="px-4 py-6 flex flex-col justify-center items-center gap-4 bg-white dark:bg-gray-700 shadow-lg md:w-3/4 w-full rounded-md">
           <h2 class="font-semibold text-xl">{{form_name}} Data Class</h2>
-          <form action="" method="post" class="flex flex-col gap-2 md:w-3/4 w-full">
+          <form action="" method="post" enctype="multipart/form-data" class="flex flex-col gap-2 md:w-3/4 w-full">
               {% csrf_token %}
               {% for field in form %}
                   <div class="flex flex-col">
                       {{ field.errors }}
                       {{ field.label_tag }} {{ field }}
+                      {% if field.help_text %}
+                        <p class="help text-xs" id="{{ field.auto_id }}_helptext">
+                          {{ field.help_text|safe }}
+                        </p>
+                      {% endif %}
                   </div>
               {% endfor %}
               

@@ -15,18 +15,23 @@
     <div class="mx-2 my-4 flex justify-center">
         <div class="px-4 py-6 flex flex-col justify-center items-center gap-4 bg-white dark:bg-gray-700 shadow-lg md:w-3/4 w-full rounded-md">
           <h2 class="font-semibold text-xl">Update Data Profile</h2>
-          <form action="" method="post" class="flex flex-col gap-2 md:w-3/4 w-full">
+          <form action="" method="post" enctype="multipart/form-data" class="flex flex-col gap-2 md:w-3/4 w-full">
               {% csrf_token %}
               {% for field in form %}
                   <div class="flex flex-col">
                       {{ field.errors }}
                       {{ field.label_tag }} {{ field }}
+                      {% if field.help_text %}
+                        <p class="help text-xs" id="{{ field.auto_id }}_helptext">
+                          {{ field.help_text|safe }}
+                        </p>
+                      {% endif %}
                   </div>
               {% endfor %}
               
               <div class="flex flex-col justify-center">
                 <input type="submit" value="Update Data" class="text-white p-2 bg-blue-500 rounded-md cursor-pointer hover:bg-fuchsia-500 my-4">
-                <a href="{% url 'profil' %}" class="py-1 px-2 bg-red-500 text-white rounded-md text-center">&leftarrow; Back</a>
+                <a href="{% url 'profile' %}" class="py-1 px-2 bg-red-500 text-white rounded-md text-center">&leftarrow; Back</a>
               </div>
 
           </form>

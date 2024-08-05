@@ -101,7 +101,7 @@ class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save()
-        df = read_excel(self.object.file, na_filter=False, dtype={"NIS": str, "NISN": str})
+        df = read_excel(self.object.file, na_filter=False, dtype={"NIS": str, "NISN": str, "HP/WA": str, "HP ORANG TUA": str})
         row, _ = df.shape
         for i in range(row):
             Alumni.objects.update_or_create(
@@ -138,6 +138,7 @@ class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
                     father_name = df.iloc[i, 26],
                     mother_name = df.iloc[i, 27],
                     family_phone = df.iloc[i, 28],
+                    photo = df.iloc[i, 29],
                 )
             )
         return HttpResponseRedirect(self.get_success_url())
@@ -160,7 +161,7 @@ class AlumniCSVQuickUploadView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save()
-        df = read_csv(self.object.file, na_filter=False, dtype={"NIS": str, "NISN": str})
+        df = read_csv(self.object.file, na_filter=False, dtype={"NIS": str, "NISN": str, "HP/WA": str, "HP ORANG TUA": str})
         row, _ = df.shape
         for i in range(row):
             Alumni.objects.update_or_create(
@@ -197,6 +198,7 @@ class AlumniCSVQuickUploadView(LoginRequiredMixin, CreateView):
                     father_name = df.iloc[i, 26],
                     mother_name = df.iloc[i, 27],
                     family_phone = df.iloc[i, 28],
+                    photo = df.iloc[i, 29],
                 )
             )
         return HttpResponseRedirect(self.get_success_url())

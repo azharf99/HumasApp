@@ -2,28 +2,28 @@
 
 {% block content %}
   <main class="p-4 sm:ml-64 overflow-auto">
-    <h1 class="px-2 text-2xl font-bold text-blue-500 dark:text-white">Subject {{form_name}} Form</h1>
+    <h1 class="px-2 text-2xl font-bold text-blue-500 dark:text-white">Teacher {{form_name}} Form</h1>
     <!-- Breadcrumb -->
     <div class="flex items-center gap-2">
-      <a href="{% url 'alumni:alumni-dashboard' %}" class="pl-2">Dashboard</a>
+      <a href="{% url 'dashboard' %}" class="pl-2">Dashboard</a>
       <p class="text-2xl">
         &triangleright;
       </p>
-      <a href="{% url 'private:subject-index' %}">Subject List</a>
+      <a href="{% url 'teacher-list' %}">Teacher List</a>
       <p class="text-2xl">
         &triangleright;
       </p>
       {% if form_name == "Create" %}
-      <a href="{% url 'private:subject-create' %}">Subject {{form_name}} Form</a>
+      <a href="{% url 'teacher-create' %}">Teacher {{form_name}} Form</a>
       {% else %}
-      <a href="#">Subject {{form_name}} Form</a>
+      <a href="">Teacher {{form_name}} Form</a>
       {% endif %}
     </div>
     <!-- Analytics Card -->
     <div class="mx-2 my-4 flex justify-center">
         <div class="px-4 py-6 flex flex-col justify-center items-center gap-4 bg-white dark:bg-gray-700 shadow-lg md:w-3/4 w-full rounded-md">
-          <h2 class="font-semibold text-xl">{{form_name}} Data Subject</h2>
-          <form action="" method="post" enctype="multipart/form-data" class="flex flex-col gap-2 md:w-3/4 w-full">
+          <h2 class="font-semibold text-xl">{{form_name}} Data Teacher</h2>
+          <form action="" method="post" class="flex flex-col gap-2 md:w-3/4 w-full">
               {% csrf_token %}
               {% for field in form %}
                   <div class="flex flex-col">

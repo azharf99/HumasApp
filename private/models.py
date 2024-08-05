@@ -16,7 +16,7 @@ class Subject(models.Model):
     
 
     def get_absolute_url(self):
-        return reverse("laporan:laporan-input", args=[self.nama_pelajaran])
+        return reverse("private:subject-index")
     
     class Meta:
         ordering = ["nama_pelajaran"]
@@ -43,7 +43,7 @@ class Private(models.Model):
     
 
     def get_absolute_url(self):
-        return reverse("laporan:laporan-input", args=[self.pelajaran])
+        return reverse("private:private-create")
     
     class Meta:
         ordering = ["-tanggal_bimbingan"]

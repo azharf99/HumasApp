@@ -9,6 +9,10 @@
       <p class="text-2xl">
         &triangleright;
       </p>
+      <a href="{% url 'student:student-index' %}">Student List</a>
+      <p class="text-2xl">
+        &triangleright;
+      </p>
       <a href="#">Student Detail</a>
     </div>
 
@@ -17,58 +21,31 @@
       <!-- Analytics Table -->
       <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg">
         <h2 class="my-2 text-center text-xl">Detail Data Student</h2>
-        <p>NIS:</p>
-        <p>{{object.nis|default:"-"}}</p>
-        <p>NISN:</p>
-        <p>{{object.nisn|default:"-"}}</p>
-        <p>NAMA:</p>
-        <p>{{object.name|default:"-"}}</p>
-        <p>ANGKATAN:</p>
-        <p>{{object.group|default:"-"}}</p>
-        <p>TEMPAT LAHIR:</p>
-        <p>{{object.birth_place|default:"-"}}</p>
-        <p>TANGGAL LAHIR:</p>
-        <p>{{object.birth_date|default:"-"}}</p>
-        <p>JENIS KELAMIN:</p>
-        <p>{{object.get_gender_display|default:"-"}}</p>
-        <p>ALAMAT:</p>
-        <p>{{object.address|default:"-"}}</p>
-        <p>HANDPHONE/WA:</p>
-        <p>{{object.phone|default:"-"}}</p>
-        <p>KELAS TERAKHIR:</p>
-        <p>{{object.last_class|default:"-"}}</p>
-        <p>TAHUN LULUS:</p>
-        <p>{{object.graduate_year|default:"-"}}</p>
-        <p>JURUSAN SARJANA (S1):</p>
-        <p>{{object.undergraduate_department|default:"-"}}</p>
-        <p>UNIVERSITAS SARJANA (S1):</p>
-        <p>{{object.undergraduate_university|default:"-"}}</p>
-        <p>JALUR MASUK SARJANA (S1):</p>
-        <p>{{object.undergraduate_university_entrance|default:"-"}}</p>
-        <p>JURUSAN MAGISTER (S2):</p>
-        <p>{{object.postgraduate_department|default:"-"}}</p>
-        <p>UNIVERSITAS MAGISTER (S2):</p>
-        <p>{{object.postgraduate_university|default:"-"}}</p>
-        <p>JALUR MASUK MAGISTER (S2):</p>
-        <p>{{object.postgraduate_university_entrance|default:"-"}}</p>
-        <p>JURUSAN DOKTORAL (S3):</p>
-        <p>{{object.doctoral_department|default:"-"}}</p>
-        <p>UNIVERSITAS DOKTORAL (S3):</p>
-        <p>{{object.doctoral_university|default:"-"}}</p>
-        <p>JALUR MASUK DOKTORAL (S3):</p>
-        <p>{{object.doctoral_university_entrance|default:"-"}}</p>
-        <p>PEKERJAAN:</p>
-        <p>{{object.job|default:"-"}}</p>
-        <p>PERUSAHAAN:</p>
-        <p>{{object.company_name|default:"-"}}</p>
-        <p>STATUS PERNIKAHAN:</p>
-        <p>{{object.married|default:"-"}}</p>
-        <p>NAMA AYAH:</p>
-        <p>{{object.father_name|default:"-"}}</p>
-        <p>NAMA IBU:</p>
-        <p>{{object.mother_name|default:"-"}}</p>
-        <p>KONTAK ORANG TUA:</p>
-        <p>{{object.family_phone|default:"-"}}</p>
+        <div class="my-4 flex justify-center" style="height: 120px;">
+          <img src="{{object.foto.url}}" alt="Foto Santri">
+        </div>
+        <p class="m-1 text-green-500 font-bold">NIS:</p>
+        <p class="m-1">{{object.nis|default:"-"}}</p>
+        <p class="m-1 text-green-500 font-bold">NISN:</p>
+        <p class="m-1">{{object.nisn|default:"-"}}</p>
+        <p class="m-1 text-green-500 font-bold">NAMA SANTRI:</p>
+        <p class="m-1">{{object.nama_siswa|default:"-"}}</p>
+        <p class="m-1 text-green-500 font-bold">KELAS:</p>
+        <p class="m-1">{{object.kelas|default:"-"}}</p>
+        <p class="m-1 text-green-500 font-bold">JENIS KELAMIN:</p>
+        <p class="m-1">{{object.jenis_kelamin|default:"-"}}</p>
+        <p class="m-1 text-green-500 font-bold">ALAMAT:</p>
+        <p class="m-1">{{object.alamat|default:"-"}}</p>
+        <p class="m-1 text-green-500 font-bold">TEMPAT LAHIR:</p>
+        <p class="m-1">{{object.tempat_lahir|default:"-"}}</p>
+        <p class="m-1 text-green-500 font-bold">TANGGAL LAHIR:</p>
+        <p class="m-1">{{object.tanggal_lahir|default:"-"}}</p>
+        <p class="m-1 text-green-500 font-bold">EMAIL:</p>
+        <p class="m-1">{{object.email|default:"-"}}</p>
+        <p class="m-1 text-green-500 font-bold">WHATSAPP:</p>
+        <p class="m-1">{{object.nomor_hp|default:"-"}}</p>
+        <p class="m-1 text-green-500 font-bold">STATUS:</p>
+        <p class="m-1">{{object.status|default:"-"}}</p>
       </div>
     </div>
 

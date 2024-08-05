@@ -20,7 +20,7 @@ class Teacher(models.Model):
         return self.nama_guru
 
     def get_absolute_url(self):
-        return reverse("profil")
+        return reverse("profile")
     
     class Meta:
         ordering = ["nama_guru"]
