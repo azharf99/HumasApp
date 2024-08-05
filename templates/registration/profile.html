@@ -14,7 +14,9 @@
     
     <div class="my-6 grid grid-cols-1 md:grid-cols-3">
       <div class="m-2 p-4 border bg-white dark:bg-gray-800 rounded-md shadow-lg flex flex-col justify-evenly gap-2">
-        <img src="https://humas.smasitalbinaa.com/static/images/hero.png" alt="Foto" class="rounded-md">
+        <div class="flex justify-center">
+          <img src="{{request.user.teacher.foto.url}}" alt="Foto" class="rounded-md w-1/2">
+        </div>
         <p class="text-xl text-balance text-center font-semibold">{{object_list.nama_guru|default:"-"}}</p>
         <p class="text-balance text-center">{{object_list.jabatan|default:"-"}}</p>
         <div class="mt-6 flex justify-center gap-2">

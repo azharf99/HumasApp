@@ -132,9 +132,6 @@
                 class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50">Beranda</a>
               <a href="{% url 'alumni:alumni-dashboard' %}"
                 class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50">Data Alumni</a>
-              <a href="#profil"
-                class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50">Profil
-                PMBP</a>
             </div>
             <div class="py-6">
               {% if request.user.is_authenticated %}
@@ -205,23 +202,11 @@
 
       <ul class="my-4 flex flex-wrap justify-center gap-2 md:gap-6">
         <li>
-          <a class="transition hover:text-gray-700/75" href="#"> Beranda </a>
+          <a class="transition hover:text-gray-700/75" href="{% url 'app-index' %}"> Beranda </a>
         </li>
 
         <li>
-          <a class="transition hover:text-gray-700/75" href="#"> Profil PMBP </a>
-        </li>
-
-        <li>
-          <a class="transition hover:text-gray-700/75" href="#"> Ekstrakurikuler </a>
-        </li>
-
-        <li>
-          <a class="transition hover:text-gray-700/75" href="#"> Prestasi </a>
-        </li>
-
-        <li>
-          <a class="transition hover:text-gray-700/75" href="#"> Galeri </a>
+          <a class="transition hover:text-gray-700/75" href="{% url 'dashboard' %}"> Data Alumni </a>
         </li>
       </ul>
 
