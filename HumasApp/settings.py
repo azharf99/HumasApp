@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'users',
     'private',
     'students',
+    'easy_thumbnails',
 ]
 
 MIDDLEWARE = [
@@ -166,3 +167,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 SITE_ID = 1
+
+
+THUMBNAIL_ALIASES = {
+    '': {
+        'avatar': {'size': (50, 50), 'crop': True},
+        'small': {'size': (100, 100), 'crop': True},
+        'medium': {'size': (150, 150), 'crop': True},
+        'report': {'size': (700, 700), 'crop': False},
+    },
+}

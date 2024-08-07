@@ -22,7 +22,8 @@
       <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg">
         <h2 class="my-2 text-center text-xl font-semibold">Detail Data Student</h2>
         <div class="my-4 flex justify-center" style="height: 120px;">
-          <img src="{{object.foto.url}}" alt="Foto Santri">
+          {% load thumbnail %}
+          <img src="{{object.foto|thumbnail_url:'medium'}}" alt="Foto Santri">
         </div>
         <div class="grid grid-cols-2">
           <p class="p-1 border-b text-green-500 font-bold">NIS</p>

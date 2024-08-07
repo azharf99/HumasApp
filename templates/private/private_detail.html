@@ -42,7 +42,8 @@
           <p class="p-1 border-b">: {{object.updated_at|date:"l j F Y H:i"|default:"-"}}</p>
         </div>
         <p class=" text-green-500 font-bold">Foto Pertemuan:</p>
-        <img src="{{object.foto.url}}" alt="Foto Pertemuan">
+        {% load thumbnail %}
+        <img src="{{object.foto|thumbnail_url:'report'}}" alt="Foto Pertemuan">
       </div>
     </div>
 
