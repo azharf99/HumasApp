@@ -2,7 +2,7 @@ from typing import Any
 from django.contrib import messages
 from django.forms.models import BaseModelForm
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from private.models import Private, Subject
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -74,6 +74,7 @@ class PrivateUpdateView(LoginRequiredMixin, UpdateView):
 
 class PrivateDeleteView(LoginRequiredMixin, DeleteView):
     model = Private
+    success_url = reverse_lazy("private:private-index")
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if self.get_object().pembimbing == request.user.teacher or request.user.is_superuser:
@@ -162,6 +163,7 @@ class SubjectUpdateView(LoginRequiredMixin, UpdateView):
 
 class SubjectDeleteView(LoginRequiredMixin, DeleteView):
     model = Subject
+    success_url = reverse_lazy("private:subject-index")
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:

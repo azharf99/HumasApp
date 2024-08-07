@@ -2,7 +2,7 @@ from typing import Any
 from django.contrib import messages
 from django.forms import BaseModelForm
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from pandas import read_csv, read_excel
 from alumni.forms import CSVFilesForm, FilesForm
 from alumni.models import CSVFiles, Files
@@ -82,6 +82,7 @@ class ClassUpdateView(LoginRequiredMixin, UpdateView):
 
 class ClassDeleteView(LoginRequiredMixin, DeleteView):
     model = Class
+    success_url = reverse_lazy("student:class-index")
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
@@ -273,6 +274,7 @@ class StudentUpdateView(LoginRequiredMixin, UpdateView):
 
 class StudentDeleteView(LoginRequiredMixin, DeleteView):
     model = Student
+    success_url = reverse_lazy("student:student-index")
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:

@@ -83,6 +83,7 @@ class UserLogUpdateView(LoginRequiredMixin, UpdateView):
     
 class UserLogDeleteView(LoginRequiredMixin, DeleteView):
     model = UserLog
+    success_url = reverse_lazy("userlog:userlog-index")
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
