@@ -24,7 +24,7 @@ class PrivateCreateView(LoginRequiredMixin, CreateView):
             user=self.request.user.teacher,
             action_flag="CREATE",
             app="PRIVATE",
-            message=f"Berhasil menambahkan data privat {self.obj}",
+            message=f"berhasil menambahkan data privat {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data privat {self.obj}', 'private/')
         messages.success(self.request, "Input Laporan Berhasil!")
@@ -57,7 +57,7 @@ class PrivateUpdateView(LoginRequiredMixin, UpdateView):
             user=self.request.user.teacher,
             action_flag="UPDATE",
             app="PRIVATE",
-            message=f"Berhasil menambahkan data privat {self.obj}",
+            message=f"berhasil menambahkan data privat {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data privat {self.obj}', 'private/')
         messages.success(self.request, "Update Laporan Berhasil!")
@@ -86,7 +86,7 @@ class PrivateDeleteView(LoginRequiredMixin, DeleteView):
             user=self.request.user.teacher,
             action_flag="DELETE",
             app="USERS",
-            message=f"Berhasil menghapus data privat {self.obj}",
+            message=f"berhasil menghapus data privat {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data privat {self.obj}', 'private/')
         messages.success(self.request, "Data Berhasil Dihapus! :)")
@@ -112,7 +112,7 @@ class SubjectCreateView(LoginRequiredMixin, CreateView):
             user=self.request.user.teacher,
             action_flag="CREATE",
             app="SUBJECT",
-            message=f"Berhasil menambahkan data mapel {self.obj}",
+            message=f"berhasil menambahkan data mapel {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data mapel {self.obj}', 'private/', 'subjects/')
         messages.success(self.request, "Input Mapel Berhasil!")
@@ -145,7 +145,7 @@ class SubjectUpdateView(LoginRequiredMixin, UpdateView):
             user=self.request.user.teacher,
             action_flag="UPDATE",
             app="SUBJECT",
-            message=f"Berhasil update data mapel {self.obj}",
+            message=f"berhasil update data mapel {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data mapel {self.obj}', 'private/', 'subjects/')
         messages.success(self.request, "Update Mapel Berhasil!")
@@ -174,7 +174,7 @@ class SubjectDeleteView(LoginRequiredMixin, DeleteView):
             user=self.request.user.teacher,
             action_flag="DELETE",
             app="SUBJECT",
-            message=f"Berhasil menghapus data mapel {self.obj}",
+            message=f"berhasil menghapus data mapel {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data mapel {self.obj}', 'private/', 'subjects/')
         messages.success(self.request, "Data Berhasil Dihapus! :)")

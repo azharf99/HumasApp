@@ -83,7 +83,7 @@ class AlumniCreateView(LoginRequiredMixin, CreateView):
             user = self.request.user.teacher,
             action_flag = "CREATE",
             app = "ALUMNI",
-            message = f"{self.request.user.teacher} berhasil menambahkan data alumni atas nama {self.object.name} angkatan {self.object.group}"
+            message = f"berhasil menambahkan data alumni atas nama {self.object.name} angkatan {self.object.group}"
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data alumni {self.object.name} angkatan {self.object.group}', 'alumni/')
         messages.success(self.request, "Update Data Berhasil! :)")
@@ -153,7 +153,7 @@ class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
             user = self.request.user.teacher,
             action_flag = "CREATE",
             app = "ALUMNI",
-            message = f"{self.request.user.teacher} berhasil impor data excel alumni"
+            message = f"berhasil impor data excel alumni"
         )
         messages.success(self.request, "Selamat, Impor data excel alumni berhasil!")
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengimpor dari excel', 'data alumni', 'alumni/')
@@ -225,7 +225,7 @@ class AlumniCSVQuickUploadView(LoginRequiredMixin, CreateView):
             user = self.request.user.teacher,
             action_flag = "CREATE",
             app = "ALUMNI",
-            message = f"{self.request.user.teacher} berhasil impor data csv alumni"
+            message = f"berhasil impor data csv alumni"
         )
         messages.success(self.request, "Selamat, Impor data CSV alumni berhasil!")
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengimpor dari csv', 'data alumni', 'alumni/')
@@ -257,7 +257,7 @@ class DownloadExcelView(LoginRequiredMixin, ListView):
             user=request.user.teacher,
             action_flag="DOWNLOAD",
             app="ALUMNI",
-            message="Berhasil download daftar alumni dalam format Excel"
+            message="berhasil download daftar alumni dalam format Excel"
         )
         send_WA_general(request.user.teacher.no_hp, 'download', 'file Excel data alumni')
         return FileResponse(buffer, as_attachment=True, filename='Daftar Alumni SMA IT Al Binaa.xlsx')
@@ -291,7 +291,7 @@ class AlumniUpdateView(LoginRequiredMixin, UpdateView):
             user = self.request.user.teacher,
             action_flag = "UPDATE",
             app = "ALUMNI",
-            message = f"{self.request.user.teacher} berhasil update data alumni atas nama {self.object.name} angkatan {self.object.group}"
+            message = f"berhasil update data alumni atas nama {self.object.name} angkatan {self.object.group}"
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data alumni {self.object.name} angkatan {self.object.group}', 'alumni/')
         messages.success(self.request, "Update Data Berhasil! :)")
@@ -318,7 +318,7 @@ class AlumniDeleteView(LoginRequiredMixin, DeleteView):
             user = self.request.user.teacher,
             action_flag = "DELETE",
             app = "ALUMNI",
-            message = f"{self.request.user.teacher} berhasil menghapus data alumni atas nama {self.obj.name} angkatan {self.obj.group}"
+            message = f"berhasil menghapus data alumni atas nama {self.obj.name} angkatan {self.obj.group}"
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data alumni {self.obj.name} angkatan {self.obj.group}', 'alumni/')
         messages.success(self.request, "Data Berhasil Dihapus! :)")

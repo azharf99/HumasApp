@@ -198,7 +198,7 @@
         <div class="">
           <p class="text-xs w-1/2">&bullet; {{log.created_at|timesince}} ago</p>
           <div class="p-2 border-l-2">
-            <p class="text-xs">{{log.message}}</p>
+            <p class="text-xs">{{log.user}} {{log.message}}</p>
           </div>
         </div>
         {% endfor %}

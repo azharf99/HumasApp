@@ -35,7 +35,7 @@ class UserLogCreateView(LoginRequiredMixin, CreateView):
                 user=self.request.user.teacher,
                 action_flag="CREATE",
                 app="USERLOG",
-                message=f"Berhasil menambahkan log {self.obj}"
+                message=f"berhasil menambahkan log {self.obj}"
             )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'log {self.obj}', 'logs/')
         messages.success(self.request, "Input Data Berhasil! :)")
@@ -70,7 +70,7 @@ class UserLogUpdateView(LoginRequiredMixin, UpdateView):
                 user=self.request.user.teacher,
                 action_flag="UPDATE",
                 app="USERLOG",
-                message=f"Berhasil update log {self.obj}"
+                message=f"berhasil update log {self.obj}"
             )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'log {self.obj}', 'logs/')
         messages.success(self.request, "Update Data Berhasil! :)")
@@ -95,7 +95,7 @@ class UserLogDeleteView(LoginRequiredMixin, DeleteView):
                 user=self.request.user.teacher,
                 action_flag="DELETE",
                 app="USERLOG",
-                message=f"Berhasil menghapus log {self.obj}"
+                message=f"berhasil menghapus log {self.obj}"
             )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'log {self.obj}', 'logs/')
         messages.success(self.request, "Data Berhasil Dihapus! :)")

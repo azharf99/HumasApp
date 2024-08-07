@@ -36,7 +36,7 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
                 user=self.request.user.teacher,
                 action_flag="CREATE",
                 app="CLASS",
-                message=f"Berhasil menambahkan data kelas {self.obj}"
+                message=f"berhasil menambahkan data kelas {self.obj}"
             )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data kelas {self.obj}', 'students/', 'class/')
         messages.success(self.request, "Input Data Berhasil! :)")
@@ -69,7 +69,7 @@ class ClassUpdateView(LoginRequiredMixin, UpdateView):
                 user=self.request.user.teacher,
                 action_flag="UPDATE",
                 app="CLASS",
-                message=f"Berhasil update data kelas {self.obj}"
+                message=f"berhasil update data kelas {self.obj}"
             )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data kelas {self.obj}', 'students/', 'class/')
         messages.success(self.request, "Update Data Berhasil! :)")
@@ -94,7 +94,7 @@ class ClassDeleteView(LoginRequiredMixin, DeleteView):
                 user=self.request.user.teacher,
                 action_flag="DELETE",
                 app="CLASS",
-                message=f"Berhasil menghapus data kelas {self.obj}"
+                message=f"berhasil menghapus data kelas {self.obj}"
             )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data kelas {self.obj}', 'students/', 'class/')
         messages.success(self.request, "Data Berhasil Dihapus! :)")
@@ -124,7 +124,7 @@ class StudentCreateView(LoginRequiredMixin, CreateView):
                 user=self.request.user.teacher,
                 action_flag="CREATE",
                 app="STUDENT",
-                message=f"Berhasil menambahkan data santri {self.obj}"
+                message=f"berhasil menambahkan data santri {self.obj}"
             )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data santri {self.obj}', 'students/')
         messages.success(self.request, "Input Data Berhasil! :)")
@@ -175,7 +175,7 @@ class StudentQuickUploadView(LoginRequiredMixin, CreateView):
                 user=self.request.user.teacher,
                 action_flag="CREATE",
                 app="STUDENT",
-                message="Berhasil impor file Excel data santri"
+                message="berhasil impor file Excel data santri"
             )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'impor file Excel', 'data santri', 'students/')
         messages.success(self.request, "Import Data Excel Berhasil! :)")
@@ -226,7 +226,7 @@ class StudentQuickCSVUploadView(LoginRequiredMixin, CreateView):
                 user=self.request.user.teacher,
                 action_flag="CREATE",
                 app="STUDENT",
-                message="Berhasil impor file CSV data santri"
+                message="berhasil impor file CSV data santri"
             )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'impor file CSV', 'data santri', 'students/')
         messages.success(self.request, "Import Data CSV Berhasil! :)")
@@ -260,7 +260,7 @@ class StudentUpdateView(LoginRequiredMixin, UpdateView):
                 user=self.request.user.teacher,
                 action_flag="UPDATE",
                 app="STUDENT",
-                message=f"Berhasil update data santri {self.obj}"
+                message=f"berhasil update data santri {self.obj}"
             )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data santri {self.obj}', 'students/')
         messages.success(self.request, "Update Data Berhasil! :)")
@@ -285,7 +285,7 @@ class StudentDeleteView(LoginRequiredMixin, DeleteView):
                 user=self.request.user.teacher,
                 action_flag="DELETE",
                 app="STUDENT",
-                message=f"Berhasil menghapus data santri {self.obj}"
+                message=f"berhasil menghapus data santri {self.obj}"
             )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data santri {self.obj}', 'students/')
         messages.success(self.request, "Data Berhasil Dihapus! :)")

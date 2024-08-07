@@ -38,10 +38,10 @@ class MyLoginView(LoginView):
                 user=form.get_user().teacher,
                 action_flag="LOGIN",
                 app="USERS",
-                message="Berhasil melakukan login ke aplikasi"
+                message="berhasil melakukan login ke aplikasi"
             )
-        send_WA_login_logout(form.get_user().teacher.no_hp, 'login', 'Selamat datang di Aplikasi PMBP')
-        messages.success(self.request, "Selamat Datang! Login Berhasil! :)")
+        send_WA_login_logout(form.get_user().teacher.no_hp, 'login', 'Selamat datang di Aplikasi Humas & PT')
+        messages.success(self.request, "Login Berhasil! :)")
         return super().form_valid(form)
 
 
@@ -82,7 +82,7 @@ class MyProfileUpdateView(LoginRequiredMixin, UpdateView):
                 user=self.request.user.teacher,
                 action_flag="UPDATE",
                 app="PROFILE",
-                message=f"Berhasil melakukan update profil {self.obj}"
+                message=f"berhasil melakukan update profil {self.obj}"
             )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data profil {self.obj}' 'accounts/', 'profile/')
         messages.success(self.request, "Update Data Berhasil! :)")
@@ -100,11 +100,11 @@ class MyLogoutView(LogoutView):
         UserLog.objects.create(
             user=request.user.teacher,
             action_flag="LOGOUT",
-            app="EKSKUL",
-            message="Berhasil logout dari aplikasi",
+            app="USERS",
+            message="berhasil logout dari aplikasi",
         )
-        send_WA_login_logout(request.user.teacher.no_hp, 'logout', 'Anda berhasil keluar dari aplikasi humas!')
-        messages.success(self.request, "Selamat Jalan! Logout Berhasil! :)")
+        send_WA_login_logout(request.user.teacher.no_hp, 'logout', 'Selamat jalan!')
+        messages.success(self.request, "Selamat Jalan, Logout Berhasil! :)")
         return super().post(request, *args, **kwargs)
     
 
@@ -132,7 +132,7 @@ class UserCreateView(LoginRequiredMixin, CreateView):
             user=self.request.user.teacher,
             action_flag="CREATE",
             app="USERS",
-            message=f"Berhasil menambahkan data user {self.obj}",
+            message=f"berhasil menambahkan data user {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data user {self.obj}', 'accounts/')
         messages.success(self.request, "Input Data Berhasil! :)")
@@ -173,7 +173,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
             user=self.request.user.teacher,
             action_flag="UPDATE",
             app="USERS",
-            message=f"Berhasil update data user {self.obj}",
+            message=f"berhasil update data user {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data user {self.obj}', 'accounts/')
         messages.success(self.request, "Update Data Berhasil! :)")
@@ -200,7 +200,7 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
             user=self.request.user.teacher,
             action_flag="DELETE",
             app="USERS",
-            message=f"Berhasil menghapus data user {self.obj}",
+            message=f"berhasil menghapus data user {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data user {self.obj}', 'accounts/')
         messages.success(self.request, "Data Berhasil Dihapus! :)")
@@ -226,7 +226,7 @@ class UserPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
             user=self.request.user.teacher,
             action_flag="UPDATE",
             app="USERS",
-            message=f"Berhasil mengubah password user {self.obj}",
+            message=f"berhasil mengubah password user {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengubah', f'password user {self.obj}', 'accounts/', 'profile/')
         messages.success(self.request, "Update Password Berhasil! :)")
@@ -261,7 +261,7 @@ class TeacherCreateView(LoginRequiredMixin, CreateView):
             user=self.request.user.teacher,
             action_flag="CREATE",
             app="TEACHER",
-            message=f"Berhasil menambahkan data guru {self.obj}",
+            message=f"berhasil menambahkan data guru {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data guru {self.obj}', 'accounts/', 'teachers/')
         messages.success(self.request, "Input Data Berhasil! :)")
@@ -297,7 +297,7 @@ class TeacherUpdateView(LoginRequiredMixin, UpdateView):
             user=self.request.user.teacher,
             action_flag="UPDATE",
             app="TEACHER",
-            message=f"Berhasil update data guru {self.obj}",
+            message=f"berhasil update data guru {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data guru {self.obj}', 'accounts/', 'teachers/')
         messages.success(self.request, "Update Data Berhasil! :)")
@@ -324,7 +324,7 @@ class TeacherDeleteView(LoginRequiredMixin, DeleteView):
             user=self.request.user.teacher,
             action_flag="DELETE",
             app="TEACHER",
-            message=f"Berhasil menghapus data guru {self.obj}",
+            message=f"berhasil menghapus data guru {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data guru {self.obj}', 'accounts/', 'teachers/')
         messages.success(self.request, "Data Berhasil Dihapus! :)")
