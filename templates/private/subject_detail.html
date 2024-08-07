@@ -20,13 +20,15 @@
     <div class="grid grid-cols-1">
       <!-- Analytics Table -->
       <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg">
-        <h2 class="my-2 text-center text-xl">Detail Data Subject</h2>
-        <p class="m-1 text-green-500 font-bold">Nama Pelajaran:</p>
-        <p class="m-1">{{object.nama_pelajaran}}</p>
-        <p class="m-1 text-green-500 font-bold">Created at:</p>
-        <p class="m-1">{{object.created_at|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">Updated at:</p>
-        <p class="m-1">{{object.updated_at|default:"-"}}</p>
+        <h2 class="my-2 text-center text-xl font-semibold">Detail Data Subject</h2>
+        <div class="grid grid-cols-2">
+          <p class="p-1 border-b text-green-500 font-bold">Nama Pelajaran</p>
+          <p class="p-1 border-b">: {{object.nama_pelajaran}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Created at</p>
+          <p class="p-1 border-b">: {{object.created_at|date:"l d F Y H:i"|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Updated at</p>
+          <p class="p-1 border-b">: {{object.updated_at|date:"l d F Y H:i"|default:"-"}}</p>
+        </div>
       </div>
     </div>
 

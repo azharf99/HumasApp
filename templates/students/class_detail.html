@@ -20,15 +20,17 @@
     <div class="grid grid-cols-1">
       <!-- Analytics Table -->
       <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg">
-        <h2 class="my-2 text-center text-xl">Detail Data Class</h2>
-        <p class="m-1 text-green-500 font-bold">Nama Kelas:</p>
-        <p class="m-1">{{object.nama_kelas}}</p>
-        <p class="m-1 text-green-500 font-bold">Tahun Ajaran:</p>
-        <p class="m-1">{{object.tahun_ajaran|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">Created at:</p>
-        <p class="m-1">{{object.created_at|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">Updated at:</p>
-        <p class="m-1">{{object.updated_at|default:"-"}}</p>
+        <h2 class="my-2 text-center text-xl font-semibold">Detail Data Class</h2>
+        <div class="grid grid-cols-2">
+          <p class="p-1 border-b text-green-500 font-bold">Nama Kelas</p>
+          <p class="p-1 border-b">: {{object.nama_kelas}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Tahun Ajaran</p>
+          <p class="p-1 border-b">: {{object.tahun_ajaran|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Created at</p>
+          <p class="p-1 border-b">: {{object.created_at|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Updated at</p>
+          <p class="p-1 border-b">: {{object.updated_at|default:"-"}}</p>
+        </div>
       </div>
     </div>
 

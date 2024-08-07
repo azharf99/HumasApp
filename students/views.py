@@ -1,7 +1,8 @@
 from typing import Any
+from django.contrib import messages
 from django.forms import BaseModelForm
-
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
+from django.urls import reverse
 from pandas import read_csv, read_excel
 from alumni.forms import CSVFilesForm, FilesForm
 from alumni.models import CSVFiles, Files
@@ -9,6 +10,8 @@ from students.models import Student, Class
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from students.forms import ClassUpdateForm, StudentUpdateForm
+from userlog.models import UserLog
+from utils.whatsapp import send_WA_create_update_delete
 
 # Class Controllers
 class ClassIndexView(ListView):
@@ -18,6 +21,27 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
     model = Class
     form_class = ClassUpdateForm
 
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+
+    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+        messages.success(self.request, "Input Data Gagal! :( Ada kesalahan input!")
+        return super().form_invalid(form)
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.obj = form.save(commit=False)
+        UserLog.objects.create(
+                user=self.request.user.teacher,
+                action_flag="CREATE",
+                app="CLASS",
+                message=f"Berhasil menambahkan data kelas {self.obj}"
+            )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data kelas {self.obj}', 'students/', 'class/')
+        messages.success(self.request, "Input Data Berhasil! :)")
+        return super().form_valid(form)
+    
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
         c["form_name"] = "Create"
@@ -30,6 +54,27 @@ class ClassUpdateView(LoginRequiredMixin, UpdateView):
     model = Class
     form_class = ClassUpdateForm
 
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+
+    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+        messages.success(self.request, "Update Data Gagal! :( Ada kesalahan input!")
+        return super().form_invalid(form)
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.obj = form.save(commit=False)
+        UserLog.objects.create(
+                user=self.request.user.teacher,
+                action_flag="UPDATE",
+                app="CLASS",
+                message=f"Berhasil update data kelas {self.obj}"
+            )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data kelas {self.obj}', 'students/', 'class/')
+        messages.success(self.request, "Update Data Berhasil! :)")
+        return super().form_valid(form)
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
         c["form_name"] = "Update"
@@ -37,6 +82,23 @@ class ClassUpdateView(LoginRequiredMixin, UpdateView):
 
 class ClassDeleteView(LoginRequiredMixin, DeleteView):
     model = Class
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        self.obj = self.get_object()
+        UserLog.objects.create(
+                user=self.request.user.teacher,
+                action_flag="DELETE",
+                app="CLASS",
+                message=f"Berhasil menghapus data kelas {self.obj}"
+            )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data kelas {self.obj}', 'students/', 'class/')
+        messages.success(self.request, "Data Berhasil Dihapus! :)")
+        return super().post(request, *args, **kwargs)
 
 
 # Student Controllers
@@ -47,6 +109,27 @@ class StudentCreateView(LoginRequiredMixin, CreateView):
     model = Student
     form_class = StudentUpdateForm
 
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+
+    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+        messages.success(self.request, "Input Data Gagal! :( Ada kesalahan input!")
+        return super().form_invalid(form)
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.obj = form.save(commit=False)
+        UserLog.objects.create(
+                user=self.request.user.teacher,
+                action_flag="CREATE",
+                app="STUDENT",
+                message=f"Berhasil menambahkan data santri {self.obj}"
+            )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data santri {self.obj}', 'students/')
+        messages.success(self.request, "Input Data Berhasil! :)")
+        return super().form_valid(form)
+    
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
         c["form_name"] = "Create"
@@ -58,32 +141,44 @@ class StudentQuickUploadView(LoginRequiredMixin, CreateView):
     form_class = FilesForm
     template_name = 'students/student_form.html'
 
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_superuser:
-            return self.handle_no_permission()
-        return super().dispatch(request, *args, **kwargs)
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save()
         df = read_excel(self.object.file, na_filter=False, dtype={"NIS": str, "NISN": str, "NOMOR_HP": str})
         row, _ = df.shape
         for i in range(row):
-            Student.objects.update_or_create(
-                nis = df.iloc[i, 0],
-                nisn = df.iloc[i, 1],
-                nama_siswa = df.iloc[i, 2],
-                defaults=dict(
-                    kelas = df.iloc[i, 0],
-                    jenis_kelamin = df.iloc[i, 1],
-                    alamat = df.iloc[i, 2],
-                    tempat_lahir = df.iloc[i, 3],
-                    tanggal_lahir = df.iloc[i, 4],
-                    email = df.iloc[i, 5],
-                    nomor_hp = df.iloc[i, 7],
-                    status = df.iloc[i, 8],
-                    foto = df.iloc[i, 9],
+            try:
+                Student.objects.update_or_create(
+                    nis = df.iloc[i, 0],
+                    nisn = df.iloc[i, 1],
+                    nama_siswa = df.iloc[i, 2],
+                    defaults=dict(
+                        kelas = Class.objects.get(pk=df.iloc[i, 3]),
+                        jenis_kelamin = df.iloc[i, 4],
+                        alamat = df.iloc[i, 5],
+                        tempat_lahir = df.iloc[i, 6],
+                        tanggal_lahir = df.iloc[i, 7],
+                        email = df.iloc[i, 8],
+                        nomor_hp = df.iloc[i, 9],
+                        status = df.iloc[i, 10],
+                        foto = df.iloc[i, 11],
+                    )
                 )
+            except:
+                messages.error(self.request, "Data pada Excel TIDAK SESUAI FORMAT! Mohon sesuaikan dengan format yang ada. Hubungi Administrator jika kesulitan.")
+                return HttpResponseRedirect(reverse("student:student-quick-create"))
+        UserLog.objects.create(
+                user=self.request.user.teacher,
+                action_flag="CREATE",
+                app="STUDENT",
+                message="Berhasil impor file Excel data santri"
             )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'impor file Excel', 'data santri', 'students/')
+        messages.success(self.request, "Import Data Excel Berhasil! :)")
         return HttpResponseRedirect(self.get_success_url())
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -97,32 +192,44 @@ class StudentQuickCSVUploadView(LoginRequiredMixin, CreateView):
     form_class = CSVFilesForm
     template_name = 'students/student_form.html'
 
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_superuser:
-            return self.handle_no_permission()
-        return super().dispatch(request, *args, **kwargs)
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save()
         df = read_csv(self.object.file, na_filter=False, dtype={"NIS": str, "NISN": str, "NOMOR_HP": str})
         row, _ = df.shape
         for i in range(row):
-            Student.objects.update_or_create(
-                nis = df.iloc[i, 0],
-                nisn = df.iloc[i, 1],
-                nama_siswa = df.iloc[i, 2],
-                defaults=dict(
-                    kelas = df.iloc[i, 0],
-                    jenis_kelamin = df.iloc[i, 1],
-                    alamat = df.iloc[i, 2],
-                    tempat_lahir = df.iloc[i, 3],
-                    tanggal_lahir = df.iloc[i, 4],
-                    email = df.iloc[i, 5],
-                    nomor_hp = df.iloc[i, 7],
-                    status = df.iloc[i, 8],
-                    foto = df.iloc[i, 9],
+            try:
+                Student.objects.update_or_create(
+                    nis = df.iloc[i, 0],
+                    nisn = df.iloc[i, 1],
+                    nama_siswa = df.iloc[i, 2],
+                    defaults=dict(
+                        kelas = Class.objects.get(pk=df.iloc[i, 3]),
+                        jenis_kelamin = df.iloc[i, 4],
+                        alamat = df.iloc[i, 5],
+                        tempat_lahir = df.iloc[i, 6],
+                        tanggal_lahir = df.iloc[i, 7],
+                        email = df.iloc[i, 8],
+                        nomor_hp = df.iloc[i, 9],
+                        status = df.iloc[i, 10],
+                        foto = df.iloc[i, 11],
+                    )
                 )
+            except:
+                messages.error(self.request, "Data pada CSV TIDAK SESUAI FORMAT! Mohon sesuaikan dengan format yang ada. Hubungi Administrator jika kesulitan.")
+                return HttpResponseRedirect(reverse("student:student-quick-create-csv"))
+        UserLog.objects.create(
+                user=self.request.user.teacher,
+                action_flag="CREATE",
+                app="STUDENT",
+                message="Berhasil impor file CSV data santri"
             )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'impor file CSV', 'data santri', 'students/')
+        messages.success(self.request, "Import Data CSV Berhasil! :)")
         return HttpResponseRedirect(self.get_success_url())
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -138,6 +245,27 @@ class StudentUpdateView(LoginRequiredMixin, UpdateView):
     model = Student
     form_class = StudentUpdateForm
 
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+
+    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+        messages.success(self.request, "Update Data Gagal! :( Ada kesalahan input!")
+        return super().form_invalid(form)
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.obj = form.save(commit=False)
+        UserLog.objects.create(
+                user=self.request.user.teacher,
+                action_flag="UPDATE",
+                app="STUDENT",
+                message=f"Berhasil update data santri {self.obj}"
+            )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data santri {self.obj}', 'students/')
+        messages.success(self.request, "Update Data Berhasil! :)")
+        return super().form_valid(form)
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
         c["form_name"] = "Update"
@@ -145,3 +273,20 @@ class StudentUpdateView(LoginRequiredMixin, UpdateView):
 
 class StudentDeleteView(LoginRequiredMixin, DeleteView):
     model = Student
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+    
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        self.obj = self.get_object()
+        UserLog.objects.create(
+                user=self.request.user.teacher,
+                action_flag="DELETE",
+                app="STUDENT",
+                message=f"Berhasil menghapus data santri {self.obj}"
+            )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data santri {self.obj}', 'students/')
+        messages.success(self.request, "Data Berhasil Dihapus! :)")
+        return super().post(request, *args, **kwargs)

@@ -12,17 +12,40 @@
     <a href="{% url 'private:private-index' %}">Private List</a>
   </div>
 
+  {% if page_obj %}
+    <div class="hidden md:flex mx-2 justify-center md:justify-end gap-2">
+      <span class="step-links">
+          {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="p-1 text-blue-500 bg-gray-100 rounded-md">&laquo; prev</a>
+          {% endif %}
+    
+          <span class="">
+            page {{page_obj.number}} of {{page_obj.paginator.num_pages}}.
+          </span>
+            
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="p-1 text-blue-500 bg-gray-100 rounded-md">next &raquo;</a>
+          {% endif %}
+      </span>
+    </div>
+  {% endif %}
   {% if object_list %}
   <div class="grid grid-cols-1 md:grid-cols-3">
     <!-- Analytics Table -->
     {% for object in object_list %}
-    <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg">
+    <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-lg shadow-lg">
       <p class="text-xl font-bold text-center">{{object.pelajaran}}</p>
       <p class="text-lg font-semibold text-center">{{object.pembimbing}}</p>
-      <p class="m-2 font-bold">Tanggal : {{object.tanggal_bimbingan|default:"-"}}</p>
-      <p class="m-2 font-bold">Waktu : {{object.waktu_bimbingan|default:"-"}}</p>
-      <p class="m-2 font-bold">Catatan : {{object.catatan_bimbingan|default:"-"}}</p>
-      <p class="m-2 font-bold">Jumlah Kehadiran Santri : {{object.kehadiran_santri.count|default:0}}</p>
+      <div class="grid grid-cols-2">
+        <p class="mx-2 py-1">Tanggal</p>
+        <p class="mx-2 py-1"> : {{object.tanggal_bimbingan|date:"j F Y"|default:"-"}}</p>
+        <p class="mx-2 py-1">Waktu</p>
+        <p class="mx-2 py-1"> : {{object.waktu_bimbingan|default:"-"}}</p>
+        <p class="mx-2 py-1">Catatan</p>
+        <p class="mx-2 py-1"> : {{object.catatan_bimbingan|default:"-"}}</p>
+        <p class="mx-2 py-1">Kehadiran Santri</p>
+        <p class="mx-2 py-1"> : {{object.kehadiran_santri.count|default:0}} santri</p>
+      </div>
       {% if request.user.is_authenticated %}  
       <div class="flex gap-2 justify-center mt-4">
         <a href="{% url 'private:private-detail' object.id %}" class="p-1 bg-blue-500 rounded-md">
@@ -50,6 +73,24 @@
   <div class="grid grid-cols-1 p-4 my-4">
     <p class="text-red-500 text-center font-bold">Maaf, belum ada data tersedia</p>
   </div>
+  {% endif %}
+
+  {% if page_obj %}
+    <div class="flex mx-2 justify-center gap-2">
+      <span class="step-links">
+          {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="p-1 text-blue-500 bg-gray-100 rounded-md">&laquo; prev</a>
+          {% endif %}
+    
+          <span class="">
+            page {{page_obj.number}} of {{page_obj.paginator.num_pages}}.
+          </span>
+            
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="p-1 text-blue-500 bg-gray-100 rounded-md">next &raquo;</a>
+          {% endif %}
+      </span>
+    </div>
   {% endif %}
   
 

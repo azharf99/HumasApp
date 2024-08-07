@@ -12,12 +12,32 @@
     <a href="{% url 'student:student-index' %}">Student List</a>
   </div>
 
+  {% if messages %}
+    {% for message in messages %}
+    <div class="m-2 flex justify-center">
+      <div
+        class="flex items-center p-4 mb-4 mx-2 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
+        role="alert">
+        <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor" viewBox="0 0 20 20">
+          <path
+            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+        </svg>
+        <span class="sr-only">Info</span>
+        <div>
+          <span class="font-medium">Success! {{message.message}}</span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  {% endif %}
+
   <div class="grid grid-cols-1">
     <!-- Analytics Table -->
-    <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg">
+    <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg overflow-auto">
       {% if object_list %}
       <table class="table-auto border-collapse w-full">
-        <caption>Tabel 1</caption>
+        <caption class="mb-4 text-xl font-semibold">Data Santri</caption>
         <thead>
           <th class="p-2 border border-gray-400">No</th>
           <th class="p-2 border border-gray-400">Nama</th>
@@ -29,9 +49,9 @@
         <tbody>
           {% for object in object_list %}
           <tr>
-            <td class="p-2 border border-gray-400">{{forloop.counter}}</td>
+            <td class="p-2 border border-gray-400 text-center">{{forloop.counter}}</td>
             <td class="p-2 border border-gray-400">{{object.nama_siswa}}</td>
-            <td class="p-2 border border-gray-400">{{object.kelas|default:"-"}}</td>
+            <td class="p-2 border border-gray-400 text-center">{{object.kelas.nama_kelas|default:"-"}}</td>
             {% if request.user.is_superuser %}
             <td class="p-2 border border-gray-400">
               <div class="flex flex-wrap gap-2 justify-center">
@@ -52,8 +72,8 @@
                   </svg>                  
                 </a>
               </div>
-            {% endif %}
             </td>
+            {% endif %}
           </tr>
           {% endfor %}
         </tbody>

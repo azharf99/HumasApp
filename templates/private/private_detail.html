@@ -20,22 +20,28 @@
     <div class="grid grid-cols-1">
       <!-- Analytics Table -->
       <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg">
-        <h2 class="my-2 text-center text-xl">Detail Data Private</h2>
-        <p class="m-1 text-green-500 font-bold">Pembimbing:</p>
-        <p class="m-1">{{object.pembimbing|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">Pelajaran:</p>
-        <p class="m-1">{{object.pelajaran|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">Tanggal Bimbingan:</p>
-        <p class="m-1">{{object.tanggal_bimbingan|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">Waktu Bimbingan:</p>
-        <p class="m-1">{{object.waktu_bimbingan|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">Catatan:</p>
-        <p class="m-1">{{object.catatan_bimbingan|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">Kehadiran Santri:</p>
-        {% for santri in object.kehadiran_santri.all %}
-        <p class="m-1">{{santri|default:"-"}}</p>
-        {% endfor %}
-        <p class="m-1 text-green-500 font-bold">Foto Pertemuan:</p>
+        <h2 class="my-2 text-center text-xl font-semibold">Detail Data Private</h2>
+        <div class="grid grid-cols-2">
+          <p class="p-1 border-b text-green-500 font-bold">Pembimbing</p>
+          <p class="p-1 border-b">: {{object.pembimbing|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Pelajaran</p>
+          <p class="p-1 border-b">: {{object.pelajaran|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Tanggal Bimbingan</p>
+          <p class="p-1 border-b">: {{object.tanggal_bimbingan|date:"l d F Y"|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Waktu Bimbingan</p>
+          <p class="p-1 border-b">: {{object.waktu_bimbingan|date:"H:i"|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Catatan</p>
+          <p class="p-1 border-b">: {{object.catatan_bimbingan|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Kehadiran Santri</p>
+          {% for santri in object.kehadiran_santri.all %}
+          <p class="p-1 border-b">: {{santri|default:"-"}}</p>
+          {% endfor %}
+          <p class="p-1 border-b text-green-500 font-bold">Created at</p>
+          <p class="p-1 border-b">: {{object.created_at|date:"l j F Y H:i"|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Updated at</p>
+          <p class="p-1 border-b">: {{object.updated_at|date:"l j F Y H:i"|default:"-"}}</p>
+        </div>
+        <p class=" text-green-500 font-bold">Foto Pertemuan:</p>
         <img src="{{object.foto.url}}" alt="Foto Pertemuan">
       </div>
     </div>

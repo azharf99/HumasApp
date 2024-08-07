@@ -19,60 +19,26 @@
 
     <div class="grid grid-cols-1">
       <!-- Analytics Table -->
-      <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg">
-        <h2 class="my-2 text-center text-xl">Detail Data User</h2>
-        <p>NIS:</p>
-        <p>{{object.nis|default:"-"}}</p>
-        <p>NISN:</p>
-        <p>{{object.nisn|default:"-"}}</p>
-        <p>NAMA:</p>
-        <p>{{object.name|default:"-"}}</p>
-        <p>ANGKATAN:</p>
-        <p>{{object.group|default:"-"}}</p>
-        <p>TEMPAT LAHIR:</p>
-        <p>{{object.birth_place|default:"-"}}</p>
-        <p>TANGGAL LAHIR:</p>
-        <p>{{object.birth_date|default:"-"}}</p>
-        <p>JENIS KELAMIN:</p>
-        <p>{{object.get_gender_display|default:"-"}}</p>
-        <p>ALAMAT:</p>
-        <p>{{object.address|default:"-"}}</p>
-        <p>HANDPHONE/WA:</p>
-        <p>{{object.phone|default:"-"}}</p>
-        <p>KELAS TERAKHIR:</p>
-        <p>{{object.last_class|default:"-"}}</p>
-        <p>TAHUN LULUS:</p>
-        <p>{{object.graduate_year|default:"-"}}</p>
-        <p>JURUSAN SARJANA (S1):</p>
-        <p>{{object.undergraduate_department|default:"-"}}</p>
-        <p>UNIVERSITAS SARJANA (S1):</p>
-        <p>{{object.undergraduate_university|default:"-"}}</p>
-        <p>JALUR MASUK SARJANA (S1):</p>
-        <p>{{object.undergraduate_university_entrance|default:"-"}}</p>
-        <p>JURUSAN MAGISTER (S2):</p>
-        <p>{{object.postgraduate_department|default:"-"}}</p>
-        <p>UNIVERSITAS MAGISTER (S2):</p>
-        <p>{{object.postgraduate_university|default:"-"}}</p>
-        <p>JALUR MASUK MAGISTER (S2):</p>
-        <p>{{object.postgraduate_university_entrance|default:"-"}}</p>
-        <p>JURUSAN DOKTORAL (S3):</p>
-        <p>{{object.doctoral_department|default:"-"}}</p>
-        <p>UNIVERSITAS DOKTORAL (S3):</p>
-        <p>{{object.doctoral_university|default:"-"}}</p>
-        <p>JALUR MASUK DOKTORAL (S3):</p>
-        <p>{{object.doctoral_university_entrance|default:"-"}}</p>
-        <p>PEKERJAAN:</p>
-        <p>{{object.job|default:"-"}}</p>
-        <p>PERUSAHAAN:</p>
-        <p>{{object.company_name|default:"-"}}</p>
-        <p>STATUS PERNIKAHAN:</p>
-        <p>{{object.married|default:"-"}}</p>
-        <p>NAMA AYAH:</p>
-        <p>{{object.father_name|default:"-"}}</p>
-        <p>NAMA IBU:</p>
-        <p>{{object.mother_name|default:"-"}}</p>
-        <p>KONTAK ORANG TUA:</p>
-        <p>{{object.family_phone|default:"-"}}</p>
+      <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg overflow-auto">
+        <h2 class="my-2 text-center text-xl font-semibold">Detail Data User</h2>
+        <div class="grid grid-cols-2">
+          <p class="p-1 border-b text-green-500 font-bold">Username
+          <p class="p-1 border-b">: {{object.username|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">First Name
+          <p class="p-1 border-b">: {{object.first_name|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Last Name
+          <p class="p-1 border-b">: {{object.last_name|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Email
+          <p class="p-1 border-b ">: {{object.email|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Date Joined
+          <p class="p-1 border-b">: {{object.date_joined|date:"l d F Y H:i"|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Last Login
+          <p class="p-1 border-b">: {{object.last_login|date:"l d F Y H:i"|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Group
+          <p class="p-1 border-b">: {{object.groups.all|join:", "|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Permission
+          <p class="p-1 border-b">: {{object.user_permissions.all|join:", "|default:"-"}}</p>
+        </div>
       </div>
     </div>
 

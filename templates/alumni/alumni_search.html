@@ -52,13 +52,17 @@
       {% for object in object_list %}
       <!-- Analytics Table -->
       <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg">
-        <p>Nama: {{object.name}}</p>
-        <p>Angkatan: {{object.group}}</p>
-        <p>Pekerjaan: {{object.job|default:""}}</p>
-        <p>Perusahaan: {{object.company_name|default:""}}</p>
-        <p>Universitas S1: {{object.undergraduate_university|default:""}}</p>
-        <p>Universitas S2: {{object.postgraduate_university|default:""}}</p>
-        <p>Universitas S3: {{object.doctoral_university|default:""}}</p>
+        <p class="text-balance text-center font-semibold">{{object.name}}</p>
+        <div class="grid grid-cols-2">
+          <p>Angkatan</p>
+          <p>: {{object.group}}</p>
+          <p>Tahun Lulus</p>
+          <p>: {{object.graduate_year}}</p>
+          <p class="text-balance">Pekerjaan</p>
+          <p class="text-balance">: {{object.job|default:""}} {{object.company_name}}</p>
+          <p>Pendidikan Terakhir</p>
+          <p>: {{object.undergraduate_university|default:""}}</p>
+        </div>
         {% if request.user.is_superuser %}
         <div class="flex justify-center gap-4 mt-4">
           <a href="{% url 'alumni:alumni-detail' object.id %}" class="p-2 bg-blue-500 rounded-md">

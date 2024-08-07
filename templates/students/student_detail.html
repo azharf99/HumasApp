@@ -20,32 +20,38 @@
     <div class="grid grid-cols-1">
       <!-- Analytics Table -->
       <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg">
-        <h2 class="my-2 text-center text-xl">Detail Data Student</h2>
+        <h2 class="my-2 text-center text-xl font-semibold">Detail Data Student</h2>
         <div class="my-4 flex justify-center" style="height: 120px;">
           <img src="{{object.foto.url}}" alt="Foto Santri">
         </div>
-        <p class="m-1 text-green-500 font-bold">NIS:</p>
-        <p class="m-1">{{object.nis|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">NISN:</p>
-        <p class="m-1">{{object.nisn|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">NAMA SANTRI:</p>
-        <p class="m-1">{{object.nama_siswa|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">KELAS:</p>
-        <p class="m-1">{{object.kelas|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">JENIS KELAMIN:</p>
-        <p class="m-1">{{object.jenis_kelamin|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">ALAMAT:</p>
-        <p class="m-1">{{object.alamat|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">TEMPAT LAHIR:</p>
-        <p class="m-1">{{object.tempat_lahir|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">TANGGAL LAHIR:</p>
-        <p class="m-1">{{object.tanggal_lahir|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">EMAIL:</p>
-        <p class="m-1">{{object.email|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">WHATSAPP:</p>
-        <p class="m-1">{{object.nomor_hp|default:"-"}}</p>
-        <p class="m-1 text-green-500 font-bold">STATUS:</p>
-        <p class="m-1">{{object.status|default:"-"}}</p>
+        <div class="grid grid-cols-2">
+          <p class="p-1 border-b text-green-500 font-bold">NIS</p>
+          <p class="p-1 border-b">: {{object.nis|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">NISN</p>
+          <p class="p-1 border-b">: {{object.nisn|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">NAMA SANTRI</p>
+          <p class="p-1 border-b">: {{object.nama_siswa|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">KELAS</p>
+          <p class="p-1 border-b">: {{object.kelas.nama_kelas|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">JENIS KELAMIN</p>
+          <p class="p-1 border-b">: {{object.jenis_kelamin|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">ALAMAT</p>
+          <p class="p-1 border-b">: {{object.alamat|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">TANGGAL LAHIR</p>
+          <p class="p-1 border-b">: {{object.tanggal_lahir|date:"l d F Y"|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">TEMPAT LAHIR</p>
+          <p class="p-1 border-b">: {{object.tempat_lahir|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">EMAIL</p>
+          <p class="p-1 border-b">: {{object.email|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">WHATSAPP</p>
+          <p class="p-1 border-b">: {{object.nomor_hp|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">STATUS</p>
+          <p class="p-1 border-b">: {{object.status|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">CREATED</p>
+          <p class="p-1 border-b">: {{object.created_at|date:"l j F Y H:i"|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">UPDATED</p>
+          <p class="p-1 border-b">: {{object.updated_at|date:"l j F Y H:i"|default:"-"}}</p>
+        </div>
       </div>
     </div>
 

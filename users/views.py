@@ -1,23 +1,20 @@
-from django import http
 from django.core.handlers.wsgi import WSGIRequest
 from django.forms import BaseModelForm
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse, reverse_lazy
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from userlog.models import UserLog
 from django.views.generic import ListView, UpdateView, CreateView, DeleteView, DetailView
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView
-from django.contrib.auth import urls
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
 from django.db.models.query import QuerySet
 from django.contrib import messages
 from django.template.response import TemplateResponse
 from users.models import Teacher
 from users.forms import ProfileUpdateForm, UserCreateForm, UserUpdateForm, UserPasswordUpdateForm
-from utils.whatsapp import send_whatsapp_login
+from utils.whatsapp import send_WA_login_logout, send_WA_create_update_delete
 from typing import Any
 
 # Create your views here.
@@ -40,22 +37,22 @@ class MyLoginView(LoginView):
         UserLog.objects.create(
                 user=form.get_user().teacher,
                 action_flag="LOGIN",
-                app="EKSKUL",
+                app="USERS",
                 message="Berhasil melakukan login ke aplikasi"
             )
-        send_whatsapp_login(form.get_user().teacher.no_hp, 'login', 'Selamat datang di Aplikasi PMBP')
+        send_WA_login_logout(form.get_user().teacher.no_hp, 'login', 'Selamat datang di Aplikasi PMBP')
+        messages.success(self.request, "Selamat Datang! Login Berhasil! :)")
         return super().form_valid(form)
 
 
 class MyProfileView(LoginRequiredMixin, ListView):
     model = Teacher
     template_name = "registration/profile.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if request.user.teacher.id == self.kwargs.get("pk") or request.user.is_superuser:
-                return super().dispatch(request, *args, **kwargs)
-        return self.handle_no_permission()
+    
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.teacher.id == self.kwargs.get("pk") or request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
     
     def get_queryset(self) -> QuerySet[Any]:
         return get_object_or_404(Teacher, user_id=self.request.user.id)
@@ -70,26 +67,32 @@ class MyProfileUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ProfileUpdateForm
     template_name = "registration/profile_form.html"
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if request.user.teacher.id == self.kwargs.get("pk") or request.user.is_superuser:
-                return super().dispatch(request, *args, **kwargs)
-        return self.handle_no_permission()
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.teacher.id == self.kwargs.get("pk") or request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+    
+    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+        messages.success(self.request, "Update Data Gagal! :( Ada kesalahan input!")
+        return super().form_invalid(form)
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.obj = form.save(commit=False)
+        UserLog.objects.create(
+                user=self.request.user.teacher,
+                action_flag="UPDATE",
+                app="PROFILE",
+                message=f"Berhasil melakukan update profil {self.obj}"
+            )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data profil {self.obj}' 'accounts/', 'profile/')
+        messages.success(self.request, "Update Data Berhasil! :)")
+        return super().form_valid(form)
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['teacher'] = self.get_queryset()
         context['name'] = "Edit Profile"
         return context
-    
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        UserLog.objects.create(
-            user=self.request.user.teacher,
-            action_flag="CHANGE",
-            app="PROFILE",
-            message="Berhasil mengubah data diri di halaman profil",
-        )
-        return super().form_valid(form)
 
 class MyLogoutView(LogoutView):
 
@@ -100,7 +103,8 @@ class MyLogoutView(LogoutView):
             app="EKSKUL",
             message="Berhasil logout dari aplikasi",
         )
-        send_whatsapp_login(request.user.teacher.no_hp, 'logout', 'Kami sedih anda tinggalkan :(, namun tidak apa-apa, jangan lupa kembali ya')
+        send_WA_login_logout(request.user.teacher.no_hp, 'logout', 'Anda berhasil keluar dari aplikasi humas!')
+        messages.success(self.request, "Selamat Jalan! Logout Berhasil! :)")
         return super().post(request, *args, **kwargs)
     
 
@@ -113,11 +117,26 @@ class UserCreateView(LoginRequiredMixin, CreateView):
     form_class = UserCreateForm
     success_url = reverse_lazy("user-list")
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if request.user.is_superuser:
-                return super().dispatch(request, *args, **kwargs)
-        return self.handle_no_permission()
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+    
+    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+        messages.success(self.request, "Input Data Gagal! :( Ada kesalahan input!")
+        return super().form_invalid(form)
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.obj = form.save(commit=False)
+        UserLog.objects.create(
+            user=self.request.user.teacher,
+            action_flag="CREATE",
+            app="USERS",
+            message=f"Berhasil menambahkan data user {self.obj}",
+        )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data user {self.obj}', 'accounts/')
+        messages.success(self.request, "Input Data Berhasil! :)")
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
@@ -127,12 +146,11 @@ class UserCreateView(LoginRequiredMixin, CreateView):
 
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if request.user.id == self.kwargs.get("pk") or request.user.is_superuser:
-                return super().dispatch(request, *args, **kwargs)
-        return self.handle_no_permission()
+    
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.id == self.kwargs.get("pk") or request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
     
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
@@ -140,11 +158,26 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     form_class = UserUpdateForm
     success_url = reverse_lazy("user-list")
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if request.user.id == self.kwargs.get("pk") or request.user.is_superuser:
-                return super().dispatch(request, *args, **kwargs)
-        return self.handle_no_permission()
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.id == self.kwargs.get("pk") or request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+    
+    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+        messages.success(self.request, "Update Data Gagal! :( Ada kesalahan input!")
+        return super().form_invalid(form)
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.obj = form.save(commit=False)
+        UserLog.objects.create(
+            user=self.request.user.teacher,
+            action_flag="UPDATE",
+            app="USERS",
+            message=f"Berhasil update data user {self.obj}",
+        )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data user {self.obj}', 'accounts/')
+        messages.success(self.request, "Update Data Berhasil! :)")
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
@@ -156,28 +189,48 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
     success_url = reverse_lazy("user-list")
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if request.user.id == self.kwargs.get("pk") or request.user.is_superuser:
-                return super().dispatch(request, *args, **kwargs)
-        return self.handle_no_permission()
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+    
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        self.obj = self.get_object()
+        UserLog.objects.create(
+            user=self.request.user.teacher,
+            action_flag="DELETE",
+            app="USERS",
+            message=f"Berhasil menghapus data user {self.obj}",
+        )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data user {self.obj}', 'accounts/')
+        messages.success(self.request, "Data Berhasil Dihapus! :)")
+        return super().post(request, *args, **kwargs)
 
 
 class UserPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     form_class = UserPasswordUpdateForm
     success_url = reverse_lazy("user-change-password-done")
 
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.id == self.kwargs.get("pk") or request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+    
+    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+        messages.success(self.request, "Update Password Gagal! :( Ada kesalahan input!")
+        return super().form_invalid(form)
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if request.user.id == self.kwargs.get("pk") or request.user.is_superuser:
-                return super().dispatch(request, *args, **kwargs)
-        return self.handle_no_permission()
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = get_object_or_404(User, id=self.kwargs.get("pk"))
-        return kwargs
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.obj = form.save(commit=False)
+        UserLog.objects.create(
+            user=self.request.user.teacher,
+            action_flag="UPDATE",
+            app="USERS",
+            message=f"Berhasil mengubah password user {self.obj}",
+        )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengubah', f'password user {self.obj}', 'accounts/', 'profile/')
+        messages.success(self.request, "Update Password Berhasil! :)")
+        return super().form_valid(form)
 
 
 class UserPasswordChangeDoneView(LoginRequiredMixin, PasswordChangeDoneView):
@@ -193,11 +246,26 @@ class TeacherCreateView(LoginRequiredMixin, CreateView):
     form_class = ProfileUpdateForm
     success_url = reverse_lazy("teacher-list")
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if request.user.is_superuser:
-                return super().dispatch(request, *args, **kwargs)
-        return self.handle_no_permission()
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+    
+    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+        messages.success(self.request, "Input Data Gagal! :( Ada kesalahan input!")
+        return super().form_invalid(form)
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.obj = form.save(commit=False)
+        UserLog.objects.create(
+            user=self.request.user.teacher,
+            action_flag="CREATE",
+            app="TEACHER",
+            message=f"Berhasil menambahkan data guru {self.obj}",
+        )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data guru {self.obj}', 'accounts/', 'teachers/')
+        messages.success(self.request, "Input Data Berhasil! :)")
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
@@ -214,11 +282,26 @@ class TeacherUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ProfileUpdateForm
     success_url = reverse_lazy("teacher-list")
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if request.user.teacher.id == self.kwargs.get("pk") or request.user.is_superuser:
-                return super().dispatch(request, *args, **kwargs)
-        return self.handle_no_permission()
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.teacher.id == self.kwargs.get("pk") or request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+    
+    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+        messages.success(self.request, "Update Data Gagal! :( Ada kesalahan input!")
+        return super().form_invalid(form)
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.obj = form.save(commit=False)
+        UserLog.objects.create(
+            user=self.request.user.teacher,
+            action_flag="UPDATE",
+            app="TEACHER",
+            message=f"Berhasil update data guru {self.obj}",
+        )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data guru {self.obj}', 'accounts/', 'teachers/')
+        messages.success(self.request, "Update Data Berhasil! :)")
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
@@ -230,8 +313,19 @@ class TeacherDeleteView(LoginRequiredMixin, DeleteView):
     model = Teacher
     success_url = reverse_lazy("teacher-list")
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            if request.user.teacher.id == self.kwargs.get("pk") or request.user.is_superuser:
-                return super().dispatch(request, *args, **kwargs)
-        return self.handle_no_permission()
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+    
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        self.obj = self.get_object()
+        UserLog.objects.create(
+            user=self.request.user.teacher,
+            action_flag="DELETE",
+            app="TEACHER",
+            message=f"Berhasil menghapus data guru {self.obj}",
+        )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data guru {self.obj}', 'accounts/', 'teachers/')
+        messages.success(self.request, "Data Berhasil Dihapus! :)")
+        return super().post(request, *args, **kwargs)

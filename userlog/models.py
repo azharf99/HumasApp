@@ -17,6 +17,8 @@ class UserLog(models.Model):
     def __str__(self):
         return f"{self.user} {self.action_flag} {self.app}"
         
+    def get_absolute_url(self):
+        return reverse("userlog:userlog-index")
 
     class Meta:
         ordering = ["-created_at"]
