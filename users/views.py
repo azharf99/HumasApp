@@ -84,7 +84,7 @@ class MyProfileUpdateView(LoginRequiredMixin, UpdateView):
                 app="PROFILE",
                 message=f"berhasil melakukan update profil {self.obj}"
             )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data profil {self.obj}' 'accounts/', 'profile/')
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data profil {self.obj}', 'accounts/', 'profile/')
         messages.success(self.request, "Update Data Berhasil! :)")
         return super().form_valid(form)
     
