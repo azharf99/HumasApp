@@ -12,6 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from students.forms import ClassUpdateForm, StudentUpdateForm
 from userlog.models import UserLog
 from utils.whatsapp import send_WA_create_update_delete
+from numpy import int8
 
 # Class Controllers
 class ClassIndexView(ListView):
@@ -149,7 +150,7 @@ class StudentQuickUploadView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save()
-        df = read_excel(self.object.file, na_filter=False, dtype={"NIS": str, "NISN": str, "NOMOR_HP": str})
+        df = read_excel(self.object.file, na_filter=False, dtype={"NIS": str, "NISN": str, "NOMOR_HP": str, "KELAS": int8})
         row, _ = df.shape
         for i in range(row):
             try:
@@ -200,7 +201,7 @@ class StudentQuickCSVUploadView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save()
-        df = read_csv(self.object.file, na_filter=False, dtype={"NIS": str, "NISN": str, "NOMOR_HP": str})
+        df = read_csv(self.object.file, na_filter=False, dtype={"NIS": str, "NISN": str, "NOMOR_HP": str, "KELAS": int8})
         row, _ = df.shape
         for i in range(row):
             try:

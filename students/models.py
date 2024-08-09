@@ -41,7 +41,7 @@ class Student(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.kelas} | {self.nama_siswa}"
+        return f"{self.kelas.nama_kelas} | {self.nama_siswa}"
 
     def get_absolute_url(self):
         return reverse("student:student-index")
