@@ -34,6 +34,10 @@
     <!-- Analytics Table -->
     {% for object in object_list %}
     <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-lg shadow-lg">
+      <div>
+        {% load thumbnail %}
+        <img src="{{object.foto|thumbnail_url:'report'}}" alt="Foto" class="rounded-md">
+      </div>
       <p class="text-xl font-bold text-center">{{object.pelajaran}}</p>
       <p class="text-lg font-semibold text-center">{{object.pembimbing}}</p>
       <div class="grid grid-cols-2">

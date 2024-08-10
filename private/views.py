@@ -1,7 +1,7 @@
 from typing import Any
 from django.contrib import messages
 from django.forms.models import BaseModelForm
-from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from private.models import Private, Subject
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from private.forms import PrivateUpdateForm, SubjectUpdateForm
 from userlog.models import UserLog
 from utils.whatsapp import send_WA_create_update_delete
+from django.core.exceptions import PermissionDenied
 
 # Private Controllers
 class PrivateIndexView(ListView):
@@ -19,16 +20,16 @@ class PrivateCreateView(LoginRequiredMixin, CreateView):
     form_class = PrivateUpdateForm
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.obj = form.save(commit=False)
+        self.object = form.save()
         UserLog.objects.create(
             user=self.request.user.teacher,
             action_flag="CREATE",
             app="PRIVATE",
-            message=f"berhasil menambahkan data privat {self.obj}",
+            message=f"berhasil menambahkan data privat {self.object}",
         )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data privat {self.obj}', 'private/')
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data privat {self.object}', 'private/')
         messages.success(self.request, "Input Laporan Berhasil!")
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
     
     def form_invalid(self, form: BaseModelForm) -> HttpResponse:
         messages.error(self.request, "Input Laporan Gagal! Ada yang salah salam pengisian. Mohon dicek ulang atau hubungi Administrator.")
@@ -49,17 +50,17 @@ class PrivateUpdateView(LoginRequiredMixin, UpdateView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if self.get_object().pembimbing == request.user.teacher or request.user.is_superuser:
             return super().get(request, *args, **kwargs)
-        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+        raise PermissionDenied
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.obj = form.save(commit=False)
+        self.object = form.save()
         UserLog.objects.create(
             user=self.request.user.teacher,
             action_flag="UPDATE",
             app="PRIVATE",
-            message=f"berhasil menambahkan data privat {self.obj}",
+            message=f"berhasil menambahkan data privat {self.object}",
         )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data privat {self.obj}', 'private/')
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data privat {self.object}', 'private/')
         messages.success(self.request, "Update Laporan Berhasil!")
         return HttpResponseRedirect(reverse("private:private-detail", kwargs={"pk": self.kwargs.get("pk")}))
     
@@ -79,7 +80,7 @@ class PrivateDeleteView(LoginRequiredMixin, DeleteView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if self.get_object().pembimbing == request.user.teacher or request.user.is_superuser:
             return super().get(request, *args, **kwargs)
-        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+        raise PermissionDenied
     
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         self.obj = self.get_object()
@@ -105,7 +106,7 @@ class SubjectCreateView(LoginRequiredMixin, CreateView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
             return super().get(request, *args, **kwargs)
-        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+        raise PermissionDenied
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.obj = form.save(commit=False)
@@ -138,7 +139,7 @@ class SubjectUpdateView(LoginRequiredMixin, UpdateView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
             return super().get(request, *args, **kwargs)
-        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+        raise PermissionDenied
     
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.obj = form.save(commit=False)
@@ -168,7 +169,7 @@ class SubjectDeleteView(LoginRequiredMixin, DeleteView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
             return super().get(request, *args, **kwargs)
-        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+        raise PermissionDenied
     
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         self.obj = self.get_object()

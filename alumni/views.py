@@ -1,5 +1,6 @@
 from io import BytesIO
 from typing import Any
+from django.core.exceptions import PermissionDenied
 from django.forms import BaseModelForm
 from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
@@ -71,7 +72,7 @@ class AlumniCreateView(LoginRequiredMixin, CreateView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
             return super().get(request, *args, **kwargs)
-        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+        raise PermissionDenied
     
     def form_invalid(self, form: BaseModelForm) -> HttpResponse:
         messages.success(self.request, "Input Data Gagal! :( Ada kesalahan input!")
@@ -101,7 +102,7 @@ class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
             return super().get(request, *args, **kwargs)
-        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+        raise PermissionDenied
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save(commit=False)
@@ -173,7 +174,7 @@ class AlumniCSVQuickUploadView(LoginRequiredMixin, CreateView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
             return super().get(request, *args, **kwargs)
-        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+        raise PermissionDenied
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save(commit=False)
@@ -269,7 +270,7 @@ class AlumniDetailView(LoginRequiredMixin, DetailView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
             return super().get(request, *args, **kwargs)
-        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+        raise PermissionDenied
 
 
 class AlumniUpdateView(LoginRequiredMixin, UpdateView):
@@ -279,7 +280,7 @@ class AlumniUpdateView(LoginRequiredMixin, UpdateView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
             return super().get(request, *args, **kwargs)
-        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+        raise PermissionDenied
     
     def form_invalid(self, form: BaseModelForm) -> HttpResponse:
         messages.success(self.request, "Update Data Gagal! :( Ada kesalahan input!")
@@ -310,7 +311,7 @@ class AlumniDeleteView(LoginRequiredMixin, DeleteView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
             return super().get(request, *args, **kwargs)
-        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
+        raise PermissionDenied
     
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         self.obj = self.get_object()

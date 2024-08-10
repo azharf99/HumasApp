@@ -33,9 +33,7 @@
           <p class="p-1 border-b text-green-500 font-bold">Catatan</p>
           <p class="p-1 border-b">: {{object.catatan_bimbingan|default:"-"}}</p>
           <p class="p-1 border-b text-green-500 font-bold">Kehadiran Santri</p>
-          {% for santri in object.kehadiran_santri.all %}
-          <p class="p-1 border-b">: {{santri|default:"-"}}</p>
-          {% endfor %}
+          <p class="p-1 border-b">: {{object.kehadiran_santri.all|join:"<br>"|default:"-" }}</p>
           <p class="p-1 border-b text-green-500 font-bold">Created at</p>
           <p class="p-1 border-b">: {{object.created_at|date:"l j F Y H:i"|default:"-"}}</p>
           <p class="p-1 border-b text-green-500 font-bold">Updated at</p>
