@@ -33,6 +33,7 @@ class Private(models.Model):
     tanggal_bimbingan = models.DateField(verbose_name=_("Tanggal"))
     waktu_bimbingan = models.TimeField(verbose_name=_("Waktu"))
     catatan_bimbingan = models.TextField(max_length=200, blank=True, verbose_name=_("Catatan"))
+    kelompok = models.CharField(_("Kelompok"), max_length=20, default="1")
     kehadiran_santri = models.ManyToManyField(Student, verbose_name=_("Kehadiran Peserta"))
     foto = models.ImageField(upload_to='ekskul/laporan', default='no-image.png', help_text="Format foto .jpg atau .jpeg", verbose_name=_("Bukti Foto"))
     created_at = models.DateTimeField(auto_now_add=True)
