@@ -49,11 +49,6 @@ class MyProfileView(LoginRequiredMixin, ListView):
     model = Teacher
     template_name = "registration/profile.html"
     
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.teacher.id == self.kwargs.get("pk") or request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        return HttpResponseForbidden("Anda tidak diizinkan mengakses halaman ini!")
-    
     def get_queryset(self) -> QuerySet[Any]:
         return get_object_or_404(Teacher, user_id=self.request.user.id)
     
