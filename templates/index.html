@@ -71,7 +71,8 @@
       </div>
       <div class="hidden lg:flex lg:gap-x-12">
         <a href="{% url 'app-index' %}" class="text-sm font-semibold leading-6 text-gray-100">Beranda</a>
-        <a href="{% url 'alumni:alumni-dashboard' %}" class="text-sm font-semibold leading-6 text-gray-100">Data Alumni</a>
+        <a href="{% url 'alumni:alumni-dashboard' %}" class="text-sm font-semibold leading-6 text-gray-100">Alumni</a>
+        <a href="{% url 'private:private-index' %}" class="text-sm font-semibold leading-6 text-gray-100">Private </a>
       </div>
       
       <div class="hidden lg:flex lg:flex-1 lg:justify-end items-center">
@@ -103,7 +104,7 @@
             <input type="submit" value="Keluar &rarr;" class="text-white text-sm font-semibold leading-6 p-2 cursor-pointer">
           </form>
         {% else %}
-        <a href="{% url 'login' %}" class="text-sm font-semibold leading-6">Masuk <span
+        <a href="{% url 'login' %}" class="text-sm font-semibold leading-6 text-white">Masuk <span
             aria-hidden="true">&rarr;</span></a>
         {% endif %}
       </div>
@@ -133,7 +134,9 @@
               <a href="{% url 'app-index' %}"
                 class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50">Beranda</a>
               <a href="{% url 'alumni:alumni-dashboard' %}"
-                class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50">Data Alumni</a>
+                class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50">Alumni</a>
+              <a href="{% url 'private:private-index' %}"
+                class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50">Private</a>
             </div>
             <div class="py-6">
               {% if request.user.is_authenticated %}
@@ -208,7 +211,11 @@
         </li>
 
         <li>
-          <a class="transition hover:text-gray-700/75" href="{% url 'dashboard' %}"> Data Alumni </a>
+          <a class="transition hover:text-gray-700/75" href="{% url 'dashboard' %}">Alumni</a>
+        </li>
+
+        <li>
+          <a class="transition hover:text-gray-700/75" href="{% url 'private:private-index' %}">Private</a>
         </li>
       </ul>
 
