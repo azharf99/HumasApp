@@ -36,7 +36,7 @@
     <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-lg shadow-lg">
       <div>
         {% load thumbnail %}
-        <img src="{{object.foto|thumbnail_url:'report'}}" alt="Foto" class="rounded-md">
+        <img src="{{object.foto|thumbnail_url:'landscape-medium'}}" alt="Foto" class="rounded-md">
       </div>
       <p class="text-xl font-bold text-center">{{object.pelajaran}}</p>
       <p class="text-lg font-semibold text-center">{{object.pembimbing}}</p>
@@ -44,7 +44,7 @@
         <p class="mx-2 py-1">Tanggal</p>
         <p class="mx-2 py-1"> : {{object.tanggal_bimbingan|date:"j F Y"|default:"-"}}</p>
         <p class="mx-2 py-1">Waktu</p>
-        <p class="mx-2 py-1"> : {{object.waktu_bimbingan|default:"-"}}</p>
+        <p class="mx-2 py-1"> : {{object.waktu_bimbingan|date:"H:i"|default:"-"}} WIB</p>
         <p class="mx-2 py-1">Catatan</p>
         <p class="mx-2 py-1"> : {{object.catatan_bimbingan|default:"-"}}</p>
         <p class="mx-2 py-1">Kehadiran Santri</p>

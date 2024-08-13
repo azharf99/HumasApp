@@ -32,6 +32,7 @@ urlpatterns = [
     path('logs/', include("userlog.urls")),
     path('private/', include("private.urls")),
     path('students/', include("students.urls")),
+    path('tahfidz/', include("tahfidz.urls")),
     path('teachers/', include("users.urls")),
 ]
 

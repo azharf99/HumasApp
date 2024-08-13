@@ -46,8 +46,12 @@
 
     {% endif %}
 
+    {% if query and request.user.is_superuser %}
+    <div class="flex justify-center">
+      <a href="{% url 'alumni:alumni-filter-download' query %}" class="p-2 mt-4 text-sm rounded-md bg-green-500">&DownArrowBar; Download Data</a>
+    </div>
+    {% endif %}
     
-
     <div class="grid grid-cols-1 md:grid-cols-3">
       {% for object in object_list %}
       <!-- Analytics Table -->

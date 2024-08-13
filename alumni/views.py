@@ -60,9 +60,13 @@ class AlumniSearchView(ListView):
                 messages.error(request, "Data Tidak Ditemukan!")
             queryset = data
         self.object_list = queryset
-        allow_empty = self.get_allow_empty()
         context = self.get_context_data()
         return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        c = super().get_context_data(**kwargs)
+        c["query"] = self.request.GET.get("query")
+        return c
 
 
 class AlumniCreateView(LoginRequiredMixin, CreateView):
@@ -93,6 +97,7 @@ class AlumniCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
         c["form_name"] = "Create"
+        c["query"] = self.request.GET.get("query")
         return c
 
 class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
@@ -237,32 +242,6 @@ class AlumniCSVQuickUploadView(LoginRequiredMixin, CreateView):
         c["form_name"] = "Import CSV"
         return c
     
-
-class DownloadExcelView(LoginRequiredMixin, ListView):
-    model = Alumni
-    
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        buffer = BytesIO()
-        workbook = Workbook(buffer)
-        worksheet = workbook.add_worksheet()
-        worksheet.write_row(0, 0, ['No', 'NIS', 'NISN', 'Nama', 'Angkatan', 'Tahun Lulus'])
-        row = 1
-        for data in self.get_queryset():
-            worksheet.write_row(row, 0, [row, f"{data.nis}", f"{data.nisn}", data.name, data.group, data.graduate_year])
-            row += 1
-        worksheet.autofit()
-        workbook.close()
-        buffer.seek(0)
-
-        UserLog.objects.create(
-            user=request.user.teacher,
-            action_flag="DOWNLOAD",
-            app="ALUMNI",
-            message="berhasil download daftar alumni dalam format Excel"
-        )
-        send_WA_general(request.user.teacher.no_hp, 'download', 'file Excel data alumni')
-        return FileResponse(buffer, as_attachment=True, filename='Daftar Alumni SMA IT Al Binaa.xlsx')
-    
     
 class AlumniDetailView(LoginRequiredMixin, DetailView):
     model = Alumni
@@ -324,3 +303,60 @@ class AlumniDeleteView(LoginRequiredMixin, DeleteView):
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data alumni {self.obj.name} angkatan {self.obj.group}', 'alumni/')
         messages.success(self.request, "Data Berhasil Dihapus! :)")
         return super().post(request, *args, **kwargs)
+    
+
+
+class AlumniDownloadExcelView(LoginRequiredMixin, ListView):
+    model = Alumni
+    
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        buffer = BytesIO()
+        workbook = Workbook(buffer)
+        worksheet = workbook.add_worksheet()
+        worksheet.write_row(0, 0, ['No', 'NIS', 'NISN', 'Nama', 'Angkatan', 'Tahun Lulus'])
+        row = 1
+        for data in self.get_queryset():
+            worksheet.write_row(row, 0, [row, f"{data.nis}", f"{data.nisn}", data.name, data.group, data.graduate_year])
+            row += 1
+        worksheet.autofit()
+        workbook.close()
+        buffer.seek(0)
+
+        UserLog.objects.create(
+            user=request.user.teacher,
+            action_flag="DOWNLOAD",
+            app="ALUMNI",
+            message="berhasil download daftar alumni dalam format Excel"
+        )
+        send_WA_general(request.user.teacher.no_hp, 'download', 'file Excel data alumni')
+        return FileResponse(buffer, as_attachment=True, filename='Daftar Alumni SMA IT Al Binaa.xlsx')
+    
+    
+class AlumniFilterDownloadExcelView(LoginRequiredMixin, ListView):
+    model = Alumni
+    
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if not request.user.is_superuser:
+            raise PermissionDenied
+        query = self.kwargs.get("query")
+        queryset = self.get_queryset().filter(Q(nis__icontains=query)|Q(name__icontains=query)|Q(nisn__icontains=query)|Q(group__icontains=query)|Q(graduate_year__icontains=query))
+        buffer = BytesIO()
+        workbook = Workbook(buffer)
+        worksheet = workbook.add_worksheet()
+        worksheet.write_row(0, 0, ['No', 'NIS', 'NISN', 'Nama', 'Angkatan', 'Tahun Lulus'])
+        row = 1
+        for data in queryset:
+            worksheet.write_row(row, 0, [row, f"{data.nis}", f"{data.nisn}", data.name, data.group, data.graduate_year])
+            row += 1
+        worksheet.autofit()
+        workbook.close()
+        buffer.seek(0)
+
+        UserLog.objects.create(
+            user=request.user.teacher,
+            action_flag="DOWNLOAD",
+            app="ALUMNI",
+            message="berhasil download list search alumni dalam format Excel"
+        )
+        send_WA_general(request.user.teacher.no_hp, 'download', 'file search Excel data alumni')
+        return FileResponse(buffer, as_attachment=True, filename='List Search Alumni SMA IT Al Binaa.xlsx')

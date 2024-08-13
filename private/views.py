@@ -1,5 +1,7 @@
 from typing import Any
+from django.conf import settings
 from django.contrib import messages
+from django.db.models.query import QuerySet
 from django.forms.models import BaseModelForm
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
@@ -10,6 +12,9 @@ from private.forms import PrivateUpdateForm, SubjectUpdateForm
 from userlog.models import UserLog
 from utils.whatsapp import send_WA_create_update_delete
 from django.core.exceptions import PermissionDenied
+from django.db.models import Count
+from django.utils import timezone
+
 
 # Private Controllers
 class PrivateIndexView(ListView):
@@ -182,3 +187,39 @@ class SubjectDeleteView(LoginRequiredMixin, DeleteView):
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data mapel {self.obj}', 'private/', 'subjects/')
         messages.success(self.request, "Data Berhasil Dihapus! :)")
         return super().post(request, *args, **kwargs)
+    
+
+
+class PrivatePrintView(LoginRequiredMixin, ListView):
+    model = Private
+    template_name = 'private/private_print.html'
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if not request.user.is_superuser:
+            raise PermissionDenied
+        return super().get(request, *args, **kwargs)
+    
+    def get_queryset(self) -> QuerySet[Any]:
+        return Private.objects.filter(tanggal_bimbingan__month=timezone.now().month, tanggal_bimbingan__year=timezone.now().year).values("pembimbing__nama_guru").annotate(dcount=Count("pelajaran"))
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        c = super().get_context_data(**kwargs)
+        MONTHS = {
+            1: "Januari",
+            2: "Februari",
+            3: "Maret",
+            4: "April",
+            5: "Mei",
+            6: "Juni",
+            7: "Juli",
+            8: "Agustus",
+            9: "September",
+            10: "Oktober",
+            11: "November",
+            12: "Desember",
+        }
+        c["tahun_ajaran"] = settings.TAHUN_AJARAN
+        c["bulan_privat"] = MONTHS.get(timezone.now().month)
+        c["jumlah_privat"] = Private.objects.filter(tanggal_bimbingan__month=timezone.now().month, tanggal_bimbingan__year=timezone.now().year).all()
+        return c
+    

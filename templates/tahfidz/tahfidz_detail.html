@@ -1,0 +1,52 @@
+{% include 'base.html' %}
+
+{% block content %}
+  <main class="p-4 sm:ml-64 overflow-auto">
+    <h1 class="px-2 text-2xl font-bold text-blue-500 dark:text-white">Tahfidz Detail</h1>
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2">
+      <a href="{% url 'dashboard' %}" class="pl-2">Dashboard</a>
+      <p class="text-2xl">
+        &triangleright;
+      </p>
+      <a href="{% url 'tahfidz:tahfidz-index' %}">Tahfidz List</a>
+      <p class="text-2xl">
+        &triangleright;
+      </p>
+      <a href="#">Tahfidz Detail</a>
+    </div>
+
+
+    <div class="grid grid-cols-1">
+      <!-- Analytics Table -->
+      <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg">
+        <h2 class="my-2 text-center text-xl font-semibold">Detail Data Tahfidz</h2>
+        <div class="grid grid-cols-2">
+          <p class="p-1 border-b text-green-500 font-bold">NIS</p>
+          <p class="p-1 border-b">: {{object.santri.nis|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">NAMA SANTRI</p>
+          <p class="p-1 border-b">: {{object.santri.nama_siswa|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">KELAS</p>
+          <p class="p-1 border-b">: {{object.santri.kelas.nama_kelas|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">JENIS KELAMIN</p>
+          <p class="p-1 border-b">: {{object.santri.jenis_kelamin|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">STATUS</p>
+          <p class="p-1 border-b">: {{object.santri.status|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">HAFALAN</p>
+          <p class="p-1 border-b text-blue-500 font-semibold">: {{object.hafalan|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">PENCAPAIAN SEBELUMNYA</p>
+          <p class="p-1 border-b text-blue-500 font-semibold">: {{object.pencapaian_sebelumnya|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">PENCAPAIAN SEKARANG</p>
+          <p class="p-1 border-b text-blue-500 font-semibold">: {{object.pencapaian_sekarang|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">CATATAN</p>
+          <p class="p-1 border-b text-blue-500 font-semibold">: {{object.catatan|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">CREATED</p>
+          <p class="p-1 border-b">: {{object.created_at|date:"l j F Y H:i"|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">UPDATED</p>
+          <p class="p-1 border-b">: {{object.updated_at|date:"l j F Y H:i"|default:"-"}}</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+{% endblock content %}

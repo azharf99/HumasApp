@@ -50,10 +50,11 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.flatpages',
     'alumni',
-    'userlog',
-    'users',
     'private',
     'students',
+    'tahfidz',
+    'userlog',
+    'users',
     'easy_thumbnails',
 ]
 
@@ -175,5 +176,18 @@ THUMBNAIL_ALIASES = {
         'small': {'size': (100, 100), 'crop': True},
         'medium': {'size': (150, 150), 'crop': True},
         'report': {'size': (700, 700), 'crop': False},
+        'landscape-small': {'size': (240, 135), 'crop': True},
+        'landscape-medium': {'size': (480, 270), 'crop': True},
+        'landscape': {'size': (720, 405), 'crop': True},
     },
 }
+
+from django.utils import timezone
+year_now = timezone.now().month
+if timezone.now().month > 6:
+    TAHUN_AJARAN = f"{year_now}/{year_now+1}"
+    AHUN_AJARAN_STRIPPED = f"{year_now}-{year_now+1}"
+else:
+    TAHUN_AJARAN = f"{year_now-1}/{year_now}"
+    AHUN_AJARAN_STRIPPED = f"{year_now-1}-{year_now}"
+TANGGAL_TAHUN_AJARAN = timezone.make_aware(timezone.datetime(2024, 6, 1, 1, 1, 1))

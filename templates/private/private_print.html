@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{site_title|default:"HUMAS SMAS IT AL BINAA"}}</title>
+  <meta content="Data Alumni SMAS IT Al Binaa" name="description" />
+  <meta
+    content="Humas SMA IT AL Binaa, SMAS IT AL Binaa, Humas & PT SMA IT AL Binaa, Alumni"
+    name="keywords" />
+  <link rel="canonical" href="https://humas.smasitalbinaa.com/alumni/" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="ALUMNI SMAS IT AL BINAA" />
+  <meta property="og:url" content="https://humas.smasitalbinaa.com/alumni/" />
+  <meta property="og:site_name" content="HUMAS SMAS IT AL BINAA IBS" />
+  <link rel="icon" href="{% static 'icon/favicon.ico' %}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'icon/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'icon/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'icon/favicon-16x16.png' %}">
+  <link rel="manifest" href="{% static 'icon/site.webmanifest' %}">
+  <link rel="stylesheet" href="{% static 'css/build.css' %}">
+</head>
+
+<body>
+<main class="p-4 overflow-auto">
+
+  <h1 class="font-semibold text-xl text-center">REKAP DATA BIMBINGAN PRIVAT</h1>
+  <h2 class="font-semibold text-xl text-center">SMAS IT AL BINAA ISLAMIC BOARDING SCHOOL</h2>
+  <h3 class="font-semibold text-xl text-center">TAHUN AJARAN 2024/2025</h3>
+  <h4 class="font-semibold text-xl text-center">BULAN {{bulan_privat|upper}}</h4>
+
+  <div class="grid grid-cols-1">
+    <!-- Analytics Table -->
+    <div class="p-4 mx-2 my-4 rounded-md overflow-auto">
+      {% if object_list %}
+      <table class="table-auto border-collapse w-full">
+        <thead>
+          <th class="p-2 border border-gray-400 bg-blue-100 text-black">No</th>
+          <th class="p-2 border border-gray-400 bg-blue-100 text-black">Nama Guru</th>
+          <th class="p-2 border border-gray-400 bg-blue-100 text-black">Jumlah Privat</th>
+          <th class="p-2 border border-gray-400 bg-blue-100 text-black">Ihsan per Pertemuan</th>
+          <th class="p-2 border border-gray-400 bg-blue-100 text-black">Total</th>
+          <th class="p-2 border border-gray-400 bg-blue-100 text-black">Tanda Tangan</th>
+        </thead>
+        <tbody>
+          {% for object in object_list %}
+          <tr>
+            <td class="p-2 border border-gray-400 text-center">{{forloop.counter}}</td>
+            <td class="p-2 border border-gray-400">{{object.pembimbing__nama_guru}}</td>
+            <td class="p-2 border border-gray-400 text-center">{{object.dcount|default:0}}</td>
+            <td class="p-2 border border-gray-400 text-center">Rp75.000,-</td>
+            <td class="p-2 border border-gray-400 text-end">Rp{% widthratio object.dcount 1 75000 %},-</td>
+            <td class="p-2 border border-gray-400 text-end"></td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td class="p-2 border border-gray-400 font-semibold text-center" colspan="2">Total Dana:</td>
+            <td class="p-2 border border-gray-400 font-semibold text-center">{{jumlah_privat.count}}</td>
+            <td class="p-2 border border-gray-400 font-semibold text-center" colspan="3">Rp{% widthratio jumlah_privat.count 1 75000 %},-</td>
+          </tr>
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+  </div>
+
+</main>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", ()=>{
+    window.print()
+  })
+</script>
+</body>
+
+</html>

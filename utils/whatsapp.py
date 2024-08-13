@@ -8,7 +8,11 @@ Anda berhasil *{action}* *{messages}*.
 
 _Ini adalah pesan otomatis, jangan dibalas._'''
     url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-    return requests.get(url)
+    try:
+        data = requests.get(url)
+        return data
+    except:
+        return None
 
 
 def send_WA_login_logout(phone="085701570100", action="", messages=""):
@@ -19,7 +23,11 @@ https://wa.me/6285701570100
 
 _Ini adalah pesan otomatis, jangan dibalas._'''
     url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-    return requests.get(url)
+    try:
+        data = requests.get(url)
+        return data
+    except:
+        return None
 
 
 def send_WA_create_update_delete(phone="085701570100", action="", messages="", type="", slug=""):
@@ -30,7 +38,11 @@ https://humas.smasitalbinaa.com/{type}{slug}
 
 _Ini adalah pesan otomatis, jangan dibalas._'''
     url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-    return requests.get(url)
+    try:
+        data = requests.get(url)
+        return data
+    except:
+        return None
 
 
 def send_WA_print(phone="085701570100", doc_type="", messages=""):
@@ -39,5 +51,9 @@ Anda berhasil mencetak {doc_type} {messages}.
 
 _Ini adalah pesan otomatis, jangan dibalas._'''
     url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"
-    return requests.get(url)
+    try:
+        data = requests.get(url)
+        return data
+    except:
+        return None
 

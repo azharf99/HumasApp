@@ -1,7 +1,7 @@
 from django.urls import path
 from alumni.views import AlumniDashboardView, AlumniSearchView, AlumniIndexView, AlumniCreateView, \
                         AlumniDetailView, AlumniUpdateView, AlumniDeleteView, AlumniQuickUploadView,\
-                        AlumniCSVQuickUploadView, DownloadExcelView
+                        AlumniCSVQuickUploadView, AlumniDownloadExcelView, AlumniFilterDownloadExcelView
 
 app_name = "alumni"
 
@@ -10,7 +10,8 @@ urlpatterns = [
     path("dashboard/", AlumniDashboardView.as_view(), name="alumni-dashboard"),
     path("search/", AlumniSearchView.as_view(), name="alumni-search"),
     path("create/", AlumniCreateView.as_view(), name="alumni-create"),
-    path("download/", DownloadExcelView.as_view(), name="alumni-download"),
+    path("download/", AlumniDownloadExcelView.as_view(), name="alumni-download"),
+    path("download/<str:query>/", AlumniFilterDownloadExcelView.as_view(), name="alumni-filter-download"),
     path("quick-upload/", AlumniQuickUploadView.as_view(), name="alumni-quick-upload"),
     path("quick-upload-csv/", AlumniCSVQuickUploadView.as_view(), name="alumni-quick-upload-csv"),
     path("detail/<int:pk>/", AlumniDetailView.as_view(), name="alumni-detail"),
