@@ -63,9 +63,9 @@ class PrivateUpdateView(LoginRequiredMixin, UpdateView):
             user=self.request.user.teacher,
             action_flag="UPDATE",
             app="PRIVATE",
-            message=f"berhasil menambahkan data privat {self.object}",
+            message=f"berhasil mengubah data privat {self.object}",
         )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data privat {self.object}', 'private/')
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengubah', f'data privat {self.object}', 'private/')
         messages.success(self.request, "Update Laporan Berhasil!")
         return HttpResponseRedirect(reverse("private:private-detail", kwargs={"pk": self.kwargs.get("pk")}))
     
