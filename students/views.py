@@ -244,6 +244,12 @@ class StudentQuickCSVUploadView(LoginRequiredMixin, CreateView):
 class StudentDetailView(LoginRequiredMixin, DetailView):
     model = Student
 
+
+class StudentPrivateView(LoginRequiredMixin, ListView):
+    model = Student
+    template_name = "students/student_private_list.html"
+
+
 class StudentUpdateView(LoginRequiredMixin, UpdateView):
     model = Student
     form_class = StudentUpdateForm
