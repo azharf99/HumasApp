@@ -19,7 +19,6 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
-from users.views import MyLoginView
 from alumni.views import AlumniDashboardView
 
 urlpatterns = [
@@ -28,12 +27,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('alumni/', include("alumni.urls")),
     path('dashboard/', AlumniDashboardView.as_view(), name="dashboard"),
-    path('login/', MyLoginView.as_view(), name="login"),
     path('logs/', include("userlog.urls")),
     path('private/', include("private.urls")),
     path('students/', include("students.urls")),
     path('tahfidz/', include("tahfidz.urls")),
-    path('teachers/', include("users.urls")),
 ]
 
 

@@ -64,10 +64,16 @@
                   </div>
               {% endfor %}
               
-              <input type="submit" value="Input Data" class="text-white p-2 bg-blue-500 rounded-md cursor-pointer hover:bg-fuchsia-500 my-4">
-          </form>
+              <input id="submit" type="submit" value="Input Data" class="text-white p-2 bg-blue-500 rounded-md cursor-pointer hover:bg-fuchsia-500 my-4">
+              <div id="loading" class="hidden flex gap-4 justify-center items-center text-white p-2 bg-blue-500 rounded-md cursor-pointer my-4">
+                <div class="loader"></div>
+                <p>Loading ...</p>
+              </div>
+            </form>
         </div>
     </div>
+
+    {% include 'loader.html' %}
 
   </main>
   
