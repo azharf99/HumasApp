@@ -306,7 +306,7 @@ class GroupUpdateView(LoginRequiredMixin, UpdateView):
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengubah', f'data kelompok privat {self.object}', 'private/')
         messages.success(self.request, "Update Laporan Berhasil!")
-        return HttpResponseRedirect(reverse("private:private-detail", kwargs={"pk": self.kwargs.get("pk")}))
+        return HttpResponseRedirect(reverse("private:group-detail", kwargs={"pk": self.kwargs.get("pk")}))
     
     def form_invalid(self, form: BaseModelForm) -> HttpResponse:
         messages.error(self.request, "Update Laporan Gagal! Ada yang salah salam pengisian. Mohon dicek ulang atau hubungi Administrator.")
@@ -319,7 +319,7 @@ class GroupUpdateView(LoginRequiredMixin, UpdateView):
 
 class GroupDeleteView(LoginRequiredMixin, DeleteView):
     model = Group
-    success_url = reverse_lazy("private:private-index")
+    success_url = reverse_lazy("private:group-index")
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
