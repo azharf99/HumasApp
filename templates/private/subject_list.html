@@ -40,7 +40,8 @@
         <caption class="mb-4 text-xl font-semibold">Data Mata Pelajaran</caption>
         <thead>
           <th class="p-2 border border-gray-400 bg-blue-100 text-black">No</th>
-          <th class="p-2 border border-gray-400 bg-blue-100 text-black">Nama Pelajran</th>
+          <th class="p-2 border border-gray-400 bg-blue-100 text-black">Nama Pelajaran</th>
+          <th class="p-2 border border-gray-400 bg-blue-100 text-black">Pengajar</th>
           {% if request.user.is_superuser %}
           <th class="p-2 border border-gray-400 bg-blue-100 text-black">Aksi</th>
           {% endif %}
@@ -49,7 +50,8 @@
           {% for object in object_list %}
           <tr>
             <td class="p-2 border border-gray-400 text-center">{{forloop.counter}}</td>
-            <td class="p-2 border border-gray-400 text-center">{{object.nama_pelajaran}}</td>
+            <td class="p-2 border border-gray-400">{{object.nama_pelajaran}}</td>
+            <td class="p-2 border border-gray-400">{{object.pembimbing.all|join:"<br>"}}</td>
             {% if request.user.is_superuser %}
             <td class="p-2 border border-gray-400">
               <div class="flex flex-wrap gap-2 justify-center">

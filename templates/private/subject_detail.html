@@ -24,6 +24,10 @@
         <div class="grid grid-cols-2">
           <p class="p-1 border-b text-green-500 font-bold">Nama Pelajaran</p>
           <p class="p-1 border-b">: {{object.nama_pelajaran}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Pembimbing</p>
+          <p class="p-1 border-b">: {{object.pembimbing.all|join:"<br>"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">Slug</p>
+          <p class="p-1 border-b">: {{object.slug|default:"-"}}</p>
           <p class="p-1 border-b text-green-500 font-bold">Created at</p>
           <p class="p-1 border-b">: {{object.created_at|date:"l d F Y H:i"|default:"-"}}</p>
           <p class="p-1 border-b text-green-500 font-bold">Updated at</p>

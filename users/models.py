@@ -4,7 +4,6 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 # Create your models here.
-
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=_("Username"),)
     niy = models.IntegerField(default=0, verbose_name=_("NIY"))

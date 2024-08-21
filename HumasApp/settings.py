@@ -56,11 +56,13 @@ INSTALLED_APPS = [
     'userlog',
     'users',
     'easy_thumbnails',
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -191,3 +193,34 @@ else:
     TAHUN_AJARAN = f"{year_now-1}/{year_now}"
     AHUN_AJARAN_STRIPPED = f"{year_now-1}-{year_now}"
 TANGGAL_TAHUN_AJARAN = timezone.make_aware(timezone.datetime(2024, 6, 1, 1, 1, 1))
+
+
+# CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_CREDENTIALS = True
+
+
+
+CORS_ALLOWED_ORIGINS = [
+    "https://smasitalbinaa.com",
+    "https://humas.smasitalbinaa.com",
+]
+
+
+CORS_ALLOW_HEADERS = (
+    "accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+)
+
+
+CORS_ALLOW_METHODS = (
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+)

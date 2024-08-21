@@ -23,7 +23,7 @@
         <h2 class="my-2 text-center text-xl font-semibold">Detail Data Teacher</h2>
         <div class="my-4 flex justify-center" style="height: 120px;">
           {% load thumbnail %}
-          <img src="{{object.foto|thumbnail_url:'medium'}}" alt="Foto Guru">
+          <img src="{{object.foto|thumbnail_url:'medium'}}" alt="Foto Guru" class="rounded-lg">
         </div>
         <div class="grid grid-cols-2">
           <p class="p-1 border-b text-green-500 font-bold">NIY</p>
@@ -32,6 +32,8 @@
           <p class="p-1 border-b">: {{object.nama_guru|default:"-"}}</p>
           <p class="p-1 border-b text-green-500 font-bold">JABATAN</p>
           <p class="p-1 border-b">: {{object.jabatan|default:"-"}}</p>
+          <p class="p-1 border-b text-green-500 font-bold">PELAJARAN YG DIAMPU</p>
+          <p class="p-1 border-b">: {{object.pelajaran|default:"-"}}</p>
           <p class="p-1 border-b text-green-500 font-bold">EMAIL</p>
           <p class="p-1 border-b">: {{object.email|default:"-"}}</p>
           <p class="p-1 border-b text-green-500 font-bold">JENIS KELAMIN</p>

@@ -67,12 +67,8 @@
           {% for object in object_list %}
           <tr>
             <td class="p-2 border border-gray-400">{{forloop.counter}}</td>
-            <td class="p-2 border border-gray-400">{{object.nama_guru}}</td>
-            <td class="p-2 border border-gray-400 text-center">
-              {% for obj in object.private_set.all %}
-              {% ifchanged %}<p>{{obj.pelajaran}}</p>{% endifchanged %}
-              {% endfor %}
-            </td>
+            <td class="p-2 border border-gray-400">{{object.nama_guru|default:"-"}}</td>
+            <td class="p-2 border border-gray-400 text-center">{{object.subject_set.all|join:"<br>"|default:"-"}}</td>
             {% if request.user.is_superuser %}
             <td class="p-2 border border-gray-400">
                 <div class="flex flex-wrap gap-2 justify-center">

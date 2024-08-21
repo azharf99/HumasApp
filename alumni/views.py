@@ -2,7 +2,7 @@ from io import BytesIO
 from typing import Any
 from django.core.exceptions import PermissionDenied
 from django.forms import BaseModelForm
-from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
+from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -167,7 +167,7 @@ class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
-        c["form_name"] = "Import Excel"
+        c["form_name"] = "Import Excel Alumni"
         return c
     
 
@@ -239,7 +239,7 @@ class AlumniCSVQuickUploadView(LoginRequiredMixin, CreateView):
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
-        c["form_name"] = "Import CSV"
+        c["form_name"] = "Import CSV Alumni"
         return c
     
     

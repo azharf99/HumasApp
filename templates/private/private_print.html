@@ -41,25 +41,18 @@
           <th class="p-2 border border-gray-400 bg-blue-100 text-black">No</th>
           <th class="p-2 border border-gray-400 bg-blue-100 text-black">Nama Guru</th>
           <th class="p-2 border border-gray-400 bg-blue-100 text-black">Jumlah Privat</th>
-          <th class="p-2 border border-gray-400 bg-blue-100 text-black">Ihsan per Pertemuan</th>
-          <th class="p-2 border border-gray-400 bg-blue-100 text-black">Total</th>
-          <th class="p-2 border border-gray-400 bg-blue-100 text-black">Tanda Tangan</th>
         </thead>
         <tbody>
           {% for object in object_list %}
           <tr>
             <td class="p-2 border border-gray-400 text-center">{{forloop.counter}}</td>
-            <td class="p-2 border border-gray-400">{{object.pembimbing__nama_guru}}</td>
+            <td class="p-2 border border-gray-400">{{object.pembimbing__nama_guru|default:"-"}}</td>
             <td class="p-2 border border-gray-400 text-center">{{object.dcount|default:0}}</td>
-            <td class="p-2 border border-gray-400 text-center">Rp75.000,-</td>
-            <td class="p-2 border border-gray-400 text-end">Rp{% widthratio object.dcount 1 75000 %},-</td>
-            <td class="p-2 border border-gray-400 text-end"></td>
           </tr>
           {% endfor %}
           <tr>
-            <td class="p-2 border border-gray-400 font-semibold text-center" colspan="2">Total Dana:</td>
+            <td class="p-2 border border-gray-400 font-semibold text-center" colspan="2">Total Privat:</td>
             <td class="p-2 border border-gray-400 font-semibold text-center">{{jumlah_privat.count}}</td>
-            <td class="p-2 border border-gray-400 font-semibold text-center" colspan="3">Rp{% widthratio jumlah_privat.count 1 75000 %},-</td>
           </tr>
         </tbody>
       </table>

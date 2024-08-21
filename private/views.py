@@ -3,12 +3,16 @@ from django.conf import settings
 from django.contrib import messages
 from django.db.models.query import QuerySet
 from django.forms.models import BaseModelForm
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse, reverse_lazy
-from private.models import Private, Subject
+from pandas import read_excel
+from alumni.forms import FilesForm
+from alumni.models import Files
+from private.models import Private, Subject, Group
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from private.forms import PrivateUpdateForm, SubjectUpdateForm
+from private.forms import PrivateCreateForm, PrivateUpdateForm, SubjectForm, GroupForm
+from students.models import Student
 from userlog.models import UserLog
 from utils.whatsapp import send_WA_create_update_delete
 from django.core.exceptions import PermissionDenied
@@ -22,7 +26,14 @@ class PrivateIndexView(ListView):
 
 class PrivateCreateView(LoginRequiredMixin, CreateView):
     model = Private
-    form_class = PrivateUpdateForm
+    form_class = PrivateCreateForm
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        k = super().get_form_kwargs()
+        k["user"] = self.request.user
+        k["subject"] = Subject.objects.prefetch_related("pembimbing").all()
+        return k
+    
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save()
@@ -48,9 +59,16 @@ class PrivateCreateView(LoginRequiredMixin, CreateView):
 class PrivateDetailView(LoginRequiredMixin, DetailView):
     model = Private
 
+
 class PrivateUpdateView(LoginRequiredMixin, UpdateView):
     model = Private
     form_class = PrivateUpdateForm
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        k = super().get_form_kwargs()
+        k["user"] = self.request.user
+        k["subject"] = Subject.objects.prefetch_related("pembimbing").all()
+        return k
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if self.get_object().pembimbing == request.user.teacher or request.user.is_superuser:
@@ -92,7 +110,7 @@ class PrivateDeleteView(LoginRequiredMixin, DeleteView):
         UserLog.objects.create(
             user=self.request.user.teacher,
             action_flag="DELETE",
-            app="USERS",
+            app="PRIVATE",
             message=f"berhasil menghapus data privat {self.obj}",
         )
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data privat {self.obj}', 'private/')
@@ -106,7 +124,7 @@ class SubjectIndexView(ListView):
 
 class SubjectCreateView(LoginRequiredMixin, CreateView):
     model = Subject
-    form_class = SubjectUpdateForm
+    form_class = SubjectForm
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
@@ -139,7 +157,7 @@ class SubjectDetailView(LoginRequiredMixin, DetailView):
 
 class SubjectUpdateView(LoginRequiredMixin, UpdateView):
     model = Subject
-    form_class = SubjectUpdateForm
+    form_class = SubjectForm
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
@@ -190,6 +208,150 @@ class SubjectDeleteView(LoginRequiredMixin, DeleteView):
     
 
 
+# Group Controllers
+class GroupIndexView(ListView):
+    model = Group
+
+class GroupCreateView(LoginRequiredMixin, CreateView):
+    model = Group
+    form_class = GroupForm
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        raise PermissionDenied
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.object = form.save()
+        UserLog.objects.create(
+            user=self.request.user.teacher,
+            action_flag="CREATE",
+            app="GROUP",
+            message=f"berhasil menambahkan data kelompok privat {self.object}",
+        )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data kelompok privat {self.object}', 'private/')
+        messages.success(self.request, "Input Laporan Berhasil!")
+        return HttpResponseRedirect(self.get_success_url())
+    
+    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+        messages.error(self.request, "Input Laporan Gagal! Ada yang salah salam pengisian. Mohon dicek ulang atau hubungi Administrator.")
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        c = super().get_context_data(**kwargs)
+        c["form_name"] = "Create"
+        return c
+
+
+class GroupQuickUploadView(LoginRequiredMixin, CreateView):
+    model = Files
+    form_class = FilesForm
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        raise PermissionDenied
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.object = form.save()
+        df = read_excel(self.object.file, na_filter=False, dtype={"NIS": str})
+        row, _ = df.shape
+        try:
+            for i in range(row):
+                obj, created = Group.objects.update_or_create(
+                    nama_kelompok = df.iloc[i, 0],
+                    jenis_kelompok = df.iloc[i, 1],
+                    pelajaran = Subject.objects.get(pk=df.iloc[i, 2]),
+                    defaults=dict(
+                        jadwal = df.iloc[i, 3],
+                        waktu = df.iloc[i, 4]
+                    )
+                )
+                obj.santri.add(Student.objects.get(nis=df.iloc[i, 5]))
+                obj.save()
+        except:
+            messages.error(self.request, "Data pada Excel TIDAK SESUAI FORMAT! Mohon sesuaikan dengan format yang ada. Hubungi Administrator jika kesulitan.")
+            return HttpResponseRedirect(reverse("private:group-index"))
+        UserLog.objects.create(
+            user = self.request.user.teacher,
+            action_flag = "CREATE",
+            app = "GROUP",
+            message = f"berhasil impor data excel kelompok privat"
+        )
+        messages.success(self.request, "Selamat, Impor data excel kelompok privat berhasil!")
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengimpor dari excel', 'data kelompok privat', 'private/', 'groups/')
+        return HttpResponseRedirect(self.get_success_url())
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        c = super().get_context_data(**kwargs)
+        c["form_name"] = "Import Excel Kelompok Privat"
+        return c
+
+
+
+class GroupDetailView(LoginRequiredMixin, DetailView):
+    model = Group
+
+class GroupUpdateView(LoginRequiredMixin, UpdateView):
+    model = Group
+    form_class = GroupForm
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        self.object = form.save()
+        UserLog.objects.create(
+            user=self.request.user.teacher,
+            action_flag="UPDATE",
+            app="GROUP",
+            message=f"berhasil mengubah data kelompok privat {self.object}",
+        )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengubah', f'data kelompok privat {self.object}', 'private/')
+        messages.success(self.request, "Update Laporan Berhasil!")
+        return HttpResponseRedirect(reverse("private:private-detail", kwargs={"pk": self.kwargs.get("pk")}))
+    
+    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+        messages.error(self.request, "Update Laporan Gagal! Ada yang salah salam pengisian. Mohon dicek ulang atau hubungi Administrator.")
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        c = super().get_context_data(**kwargs)
+        c["form_name"] = "Update"
+        return c
+
+class GroupDeleteView(LoginRequiredMixin, DeleteView):
+    model = Group
+    success_url = reverse_lazy("private:private-index")
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        raise PermissionDenied
+    
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        self.obj = self.get_object()
+        UserLog.objects.create(
+            user=self.request.user.teacher,
+            action_flag="DELETE",
+            app="GROUP",
+            message=f"berhasil menghapus data kelompok privat {self.obj}",
+        )
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data kelompok privat {self.obj}', 'private/')
+        messages.success(self.request, "Data Berhasil Dihapus! :)")
+        return super().post(request, *args, **kwargs)
+
+
+class GroupGetView(LoginRequiredMixin, DetailView):
+    model = Group
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        query = request.GET.get("query")
+        if query:
+            data = list(Group.objects.filter(pk=query).values("santri", "santri__nama_siswa"))
+        else:
+            data = list(Group.objects.all().values("santri", "santri__nama_siswa"))
+
+        return JsonResponse(data, safe=False)
+
+
 class PrivatePrintView(LoginRequiredMixin, ListView):
     model = Private
     template_name = 'private/private_print.html'
@@ -220,6 +382,7 @@ class PrivatePrintView(LoginRequiredMixin, ListView):
         }
         c["tahun_ajaran"] = settings.TAHUN_AJARAN
         c["bulan_privat"] = MONTHS.get(timezone.now().month)
+        c["site_title"] = f"Rekap Privat {c['bulan_privat']} {timezone.now().year}"
         c["jumlah_privat"] = Private.objects.filter(tanggal_bimbingan__month=timezone.now().month, tanggal_bimbingan__year=timezone.now().year).all()
         return c
     
