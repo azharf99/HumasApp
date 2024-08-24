@@ -346,8 +346,24 @@ class GroupGetView(LoginRequiredMixin, DetailView):
         query = request.GET.get("query")
         if query:
             data = list(Group.objects.filter(pk=query).values("santri", "santri__nama_siswa"))
+            extra_data = list(Student.objects.select_related("kelas").filter(kelas__nama_kelas__startswith="XII").exclude(pk__in=Group.objects.filter(pk=query).values_list("santri")).values("id", "nama_siswa"))
+            full_data = dict()
+            full_data["utama"] = data
+            full_data["ekstra"] = extra_data
+            return JsonResponse(full_data, safe=False)
         else:
-            data = list(Group.objects.all().values("santri", "santri__nama_siswa"))
+            data = {
+                "utama": [
+                    {
+                    "santri": None,
+                    "santri__nama_siswa": "Error! Harus Pilih Kelompok!"
+                    },
+                    {
+                    "santri": None,
+                    "santri__nama_siswa": "Jika Bingung, Hubungi Admin!"
+                    }
+                ]
+            }
 
         return JsonResponse(data, safe=False)
 

@@ -69,10 +69,6 @@
                 <div class="loader"></div>
                 <p>Loading ...</p>
               </div>
-
-              <div class="flex justify-center">
-                <a href="{% url 'private:group-index' %}" class="text-center text-white p-1 bg-red-500 rounded-md cursor-pointer hover:bg-fuchsia-500 my-4">Tambah Data Siswa ke Kelompok</a>
-              </div>
             </form>
         </div>
     </div>
@@ -98,12 +94,27 @@
             .then(response => response.json())
             .then(data => {
 
-                data.forEach((option) => {
+                const optionGroup1 = document.createElement("OPTGROUP");
+                optionGroup1.label = "Data Utama"
+                optionGroup1.classList = "font-bold my-4"
+                data["utama"].forEach((option) => {
                     const newOption = document.createElement('option');
                     newOption.value = option.santri;
                     newOption.textContent = option.santri__nama_siswa;
-                    secondSelect.appendChild(newOption);
+                    optionGroup1.appendChild(newOption);
+                  });
+                secondSelect.appendChild(optionGroup1);
+                
+                const optionGroup2 = document.createElement("OPTGROUP");
+                optionGroup2.label = "Data Santri Tambahan"
+                optionGroup2.classList = "font-semibold my-4"
+                data["ekstra"].forEach((option) => {
+                  const newOption = document.createElement('option');
+                  newOption.value = option.id;
+                  newOption.textContent = option.nama_siswa;
+                  optionGroup2.appendChild(newOption);
                 });
+                secondSelect.appendChild(optionGroup2);
             })
             .catch(error => {
                 console.error('Error fetching options:', error);
