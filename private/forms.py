@@ -7,9 +7,8 @@ class SubjectForm(forms.ModelForm):
     class Meta:
         model = Subject
         fields = '__all__'
-        exclude = ['slug']
         widgets = {
-            "pembimbing" : forms.Select(attrs={"class": "rounded-md text-black px-2 py-1 border-2 border-blue-500 dark:border-none shadow-lg"}),
+            "pembimbing" : forms.SelectMultiple(attrs={"class": "rounded-md text-black px-2 py-1 border-2 border-blue-500 dark:border-none shadow-lg"}),
             "nama_pelajaran" : forms.TextInput(attrs={"class": "rounded-md text-black px-2 py-1 border-2 border-blue-500 dark:border-none shadow-lg"}),
         }
 

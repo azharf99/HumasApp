@@ -75,6 +75,7 @@ class TahfidzQuickUploadView(LoginRequiredMixin, CreateView):
                         pencapaian_sebelumnya = df.iloc[i, 3],
                         pencapaian_sekarang = df.iloc[i, 4],
                         catatan = df.iloc[i, 5],
+                        pembimbing = df.iloc[i, 6],
                     )
                 )
             except:
@@ -119,6 +120,7 @@ class TahfidzQuickCSVUploadView(LoginRequiredMixin, CreateView):
                         pencapaian_sebelumnya = df.iloc[i, 3],
                         pencapaian_sekarang = df.iloc[i, 4],
                         catatan = df.iloc[i, 5],
+                        pembimbing = df.iloc[i, 6],
                     )
                 )
             except:

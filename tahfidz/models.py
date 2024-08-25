@@ -6,6 +6,7 @@ from django.urls import reverse
 # Create your models here.
 class Tahfidz(models.Model):
     santri = models.ForeignKey(Student, on_delete=models.CASCADE, verbose_name=_("Santri"))
+    pembimbing = models.CharField(_("Juz yang dihafal"), max_length=255, blank=True, null=True)
     hafalan = models.CharField(_("Juz yang dihafal"), max_length=255)
     pencapaian_sebelumnya = models.CharField(_("Pencapaian Sebelumnya"), max_length=255, blank=True, null=True)
     pencapaian_sekarang = models.CharField(_("Pencapaian Sekarang"), max_length=255, blank=True, null=True)
