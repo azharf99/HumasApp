@@ -345,8 +345,8 @@ class GroupGetView(LoginRequiredMixin, DetailView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         query = request.GET.get("query")
         if query:
-            data = list(Group.objects.filter(pk=query).values("santri", "santri__nama_siswa"))
-            extra_data = list(Student.objects.select_related("kelas").filter(kelas__nama_kelas__startswith="XII").exclude(pk__in=Group.objects.filter(pk=query).values_list("santri")).values("id", "nama_siswa"))
+            data = list(Group.objects.filter(pk=query).values("santri", "santri__nama_siswa", "santri__kelas__nama_kelas"))
+            extra_data = list(Student.objects.select_related("kelas").filter(kelas__nama_kelas__startswith="XII").exclude(pk__in=Group.objects.filter(pk=query).values_list("santri")).values("id", "nama_siswa", "kelas__nama_kelas"))
             full_data = dict()
             full_data["utama"] = data
             full_data["ekstra"] = extra_data

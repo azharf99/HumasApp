@@ -64,7 +64,7 @@
                   </div>
               {% endfor %}
               
-              <input id="submit" type="submit" value="{{form_name}} Data" class="text-white p-2 bg-blue-500 rounded-md cursor-pointer hover:bg-fuchsia-500 my-4">
+              <input id="submit" type="submit" value="{{form_name|default:'Input'}} Data" class="text-white p-2 bg-blue-500 rounded-md cursor-pointer hover:bg-fuchsia-500 my-4">
               <div id="loading" class="hidden flex gap-4 justify-center items-center text-white p-2 bg-blue-500 rounded-md cursor-pointer my-4">
                 <div class="loader"></div>
                 <p>Loading ...</p>
@@ -87,7 +87,7 @@
 
         // URL for the API request (replace with your actual API endpoint)
         const apiUrl = `http://127.0.0.1:8000/private/get-group/?query=${firstSelectValue}`;
-        // const apiUrl = `http://humas.smasitalbinaa.com/private/get-group/?query=${firstSelectValue}`;
+        // const apiUrl = `https://humas.smasitalbinaa.com/private/get-group/?query=${firstSelectValue}`;
 
         // Fetch options from the API
         fetch(apiUrl)
@@ -100,7 +100,7 @@
                 data["utama"].forEach((option) => {
                     const newOption = document.createElement('option');
                     newOption.value = option.santri;
-                    newOption.textContent = option.santri__nama_siswa;
+                    newOption.textContent = `(${option.santri__kelas__nama_kelas}) ${option.santri__nama_siswa}`;
                     optionGroup1.appendChild(newOption);
                   });
                 secondSelect.appendChild(optionGroup1);
@@ -111,7 +111,7 @@
                 data["ekstra"].forEach((option) => {
                   const newOption = document.createElement('option');
                   newOption.value = option.id;
-                  newOption.textContent = option.nama_siswa;
+                  newOption.textContent = `(${option.kelas__nama_kelas}) ${option.nama_siswa}`;
                   optionGroup2.appendChild(newOption);
                 });
                 secondSelect.appendChild(optionGroup2);
