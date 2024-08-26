@@ -67,7 +67,7 @@ class Private(models.Model):
     kelompok = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
     kehadiran_santri = models.ManyToManyField(Student, verbose_name=_("Kehadiran Peserta"), help_text="Pada PC, tekan CTRL + Clik untuk memilih lebih dari satu (1).")
     foto = models.ImageField(upload_to='privat/laporan', default='no-image.png', help_text="Format foto .jpg atau .jpeg", verbose_name=_("Bukti Foto"))
-    tahun_ajaran = models.CharField(_("Tahun Ajaran"), max_length=50, default=f"{year_now if month_now > 6 else year_now - 1 }/{year_now - 1 if month_now > 6 else year_now}", blank=True, null=True)
+    tahun_ajaran = models.CharField(_("Tahun Ajaran"), max_length=50, default=f"{year_now if month_now > 6 else year_now - 1 }/{year_now + 1 if month_now > 6 else year_now}", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
