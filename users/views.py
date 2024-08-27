@@ -9,7 +9,7 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView,
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpRequest, HttpResponseForbidden
+from django.http import HttpResponse, HttpRequest, HttpResponseForbidden, HttpResponseRedirect
 from django.db.models.query import QuerySet
 from django.contrib import messages
 from django.template.response import TemplateResponse
@@ -207,6 +207,16 @@ class UserPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     form_class = UserPasswordUpdateForm
     success_url = reverse_lazy("user-change-password-done")
 
+    def get_object(self):
+        # Get the user object based on the pk from the URL
+        return get_object_or_404(User, pk=self.kwargs.get("pk"))
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        # Bind the form to the correct user instance
+        kwargs['user'] = self.get_object()
+        return kwargs
+    
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.id == self.kwargs.get("pk") or request.user.is_superuser:
             return super().get(request, *args, **kwargs)
@@ -217,19 +227,19 @@ class UserPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
         return super().form_invalid(form)
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.obj = form.save(commit=False)
+        self.object = form.save()
         UserLog.objects.create(
             user=self.request.user.teacher,
             action_flag="UPDATE",
             app="USERS",
-            message=f"berhasil mengubah password user {self.obj}",
+            message=f"berhasil mengubah password user {self.object}",
         )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengubah', f'password user {self.obj}', 'accounts/', 'profile/')
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengubah', f'password user {self.object}', 'accounts/', 'profile/')
         messages.success(self.request, "Update Password Berhasil! :)")
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
 
-class UserPasswordChangeDoneView(LoginRequiredMixin, PasswordChangeDoneView):
+class UserPasswordChangeDoneView(PasswordChangeDoneView):
     template_name ="registration/password_change_done.html"
     
 

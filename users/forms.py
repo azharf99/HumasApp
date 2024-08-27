@@ -58,6 +58,11 @@ class UserUpdateForm(UserChangeForm):
 
 
 class UserPasswordUpdateForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        # Ensure the form is initialized with the correct user instance
+        self.user = kwargs.pop('user', None)
+        super().__init__(self.user, *args, **kwargs)
+
     old_password = forms.CharField(
         label=_("Old password"),
         strip=False,
