@@ -53,7 +53,12 @@ class AlumniSearchView(ListView):
         query = request.GET.get("query")
         queryset = None
         if query:
-            data = Alumni.objects.filter(Q(nis__icontains=query)|Q(name__icontains=query)|Q(nisn__icontains=query)|Q(group__icontains=query)|Q(graduate_year__icontains=query))
+            data = Alumni.objects.filter(Q(nis__icontains=query)|
+                                         Q(name__icontains=query)|
+                                         Q(nisn__icontains=query)|
+                                         Q(group__icontains=query)|
+                                         Q(graduate_year__icontains=query)|
+                                         Q(undergraduate_university__icontains=query))
             if len(data) > 0:
                 messages.success(request, f"{len(data)} Data Berhasil Ditemukan!")
             else:
