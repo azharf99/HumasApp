@@ -24,7 +24,7 @@ class DashboardView(ListView):
         c["jumlah_private"] = Private.objects.all()
         c["jumlah_private_bulan_ini"] = c["jumlah_private"].filter(tanggal_bimbingan__month=timezone.now().month).count()
         c["jumlah_private_bulan_lalu"] = c["jumlah_private"].filter(tanggal_bimbingan__month=timezone.now().month-1).count()
-        c["jumlah_mapel_private"] = Subject.objects.all()
+        c["jumlah_mapel_private"] = Subject.objects.select_related("pelajaran").all()
         c["jumlah_mapel_private_aktif"] = c["jumlah_private"].values_list("pelajaran").distinct()
         c["jumlah_mapel_private_nonaktif"] = Subject.objects.exclude(pk__in=c["jumlah_mapel_private_aktif"]).count()
         c["jumlah_alumni_putra"] = self.queryset.filter(gender="L")
