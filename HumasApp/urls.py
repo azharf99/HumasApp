@@ -19,14 +19,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
-from alumni.views import AlumniDashboardView
+from .views import DashboardView
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name="index.html"), name='app-index'),
     path('accounts/', include("users.urls")),
     path('admin/', admin.site.urls),
     path('alumni/', include("alumni.urls")),
-    path('dashboard/', AlumniDashboardView.as_view(), name="dashboard"),
+    path('dashboard/', DashboardView.as_view(), name="dashboard"),
     path('logs/', include("userlog.urls")),
     path('private/', include("private.urls")),
     path('students/', include("students.urls")),
