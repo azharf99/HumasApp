@@ -71,7 +71,7 @@
       </div>
       <div class="hidden lg:flex lg:gap-x-12">
         <a href="{% url 'app-index' %}" class="text-sm font-semibold leading-6 text-gray-100">Beranda</a>
-        <a href="{% url 'alumni:alumni-dashboard' %}" class="text-sm font-semibold leading-6 text-gray-100">Alumni</a>
+        <a href="{% url 'alumni:alumni-index' %}" class="text-sm font-semibold leading-6 text-gray-100">Alumni</a>
         <a href="{% url 'private:private-index' %}" class="text-sm font-semibold leading-6 text-gray-100">Private </a>
       </div>
       
@@ -133,7 +133,7 @@
             <div class="space-y-2 py-6">
               <a href="{% url 'app-index' %}"
                 class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50">Beranda</a>
-              <a href="{% url 'alumni:alumni-dashboard' %}"
+              <a href="{% url 'dashboard' %}"
                 class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50">Alumni</a>
               <a href="{% url 'private:private-index' %}"
                 class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50">Private</a>
@@ -173,7 +173,7 @@
         </p>
         <div class="lg:px-10">
           {% if request.user.is_authenticated %}
-          <a href="{% url 'alumni:alumni-dashboard' %}"
+          <a href="{% url 'dashboard' %}"
             class="py-3 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-black dark:hover:bg-gray-70">
             Dasbor &rarr;
           </a>
@@ -211,7 +211,7 @@
         </li>
 
         <li>
-          <a class="transition hover:text-gray-700/75" href="{% url 'dashboard' %}">Alumni</a>
+          <a class="transition hover:text-gray-700/75" href="{% url 'alumni:alumni-index' %}">Alumni</a>
         </li>
 
         <li>
