@@ -16,8 +16,9 @@ from students.models import Student
 from userlog.models import UserLog
 from utils.whatsapp import send_WA_create_update_delete
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count
 from django.utils import timezone
+from django.db.models import F, Func, Value, CharField, Count
+from django.db.models.functions import Cast, ExtractMonth, ExtractYear, Concat
 
 
 # Private Controllers
@@ -368,6 +369,35 @@ class GroupGetView(LoginRequiredMixin, DetailView):
         return JsonResponse(data, safe=False)
 
 
+class PrivateOptionsView(ListView):
+    model = Private
+    template_name = 'private/private_options.html'
+    queryset = Private.objects.values("tanggal_bimbingan__month", "tanggal_bimbingan__year").order_by().distinct()
+    
+    def get_queryset(self) -> QuerySet[Any]:
+        month_names = {
+            1: "Januari", 2: "Februari", 3: "Maret", 4: "April",
+            5: "Mei", 6: "Juni", 7: "Juli", 8: "Agustus",
+            9: "September", 10: "Oktober", 11: "November", 12: "Desember"
+        }
+
+        monthList = list()
+        monthSet = set()
+        yearSet = set()
+        allDict = dict()
+        for i in self.queryset:
+                monthSet.add(i['tanggal_bimbingan__month'])
+                yearSet.add(i['tanggal_bimbingan__year'])
+        for i in monthSet:
+            monthList.append({"nama": month_names.get(i), "value": i})
+        allDict["month"] = monthList
+        allDict["year"] = list(yearSet)
+        
+        print(allDict)
+        
+        return [allDict]
+
+
 class PrivatePrintView(LoginRequiredMixin, ListView):
     model = Private
     template_name = 'private/private_print.html'
@@ -378,6 +408,10 @@ class PrivatePrintView(LoginRequiredMixin, ListView):
         return super().get(request, *args, **kwargs)
     
     def get_queryset(self) -> QuerySet[Any]:
+        month = self.request.GET.get("month")
+        year = self.request.GET.get("year")
+        if month and year:
+            return Private.objects.filter(tanggal_bimbingan__month=month, tanggal_bimbingan__year=year).values("pembimbing__nama_guru").annotate(dcount=Count("pelajaran"))
         return Private.objects.filter(tanggal_bimbingan__month=timezone.now().month, tanggal_bimbingan__year=timezone.now().year).values("pembimbing__nama_guru").annotate(dcount=Count("pelajaran"))
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -397,8 +431,16 @@ class PrivatePrintView(LoginRequiredMixin, ListView):
             12: "Desember",
         }
         c["tahun_ajaran"] = settings.TAHUN_AJARAN
-        c["bulan_privat"] = MONTHS.get(timezone.now().month)
-        c["site_title"] = f"Rekap Privat {c['bulan_privat']} {timezone.now().year}"
-        c["jumlah_privat"] = Private.objects.filter(tanggal_bimbingan__month=timezone.now().month, tanggal_bimbingan__year=timezone.now().year).all()
+        month = self.request.GET.get("month")
+        year = self.request.GET.get("year")
+
+        if month and year:
+            c["bulan_privat"] = MONTHS.get(int(month))
+            c["jumlah_privat"] = Private.objects.filter(tanggal_bimbingan__month=month, tanggal_bimbingan__year=year).all()
+            c["site_title"] = f"Rekap Privat {c['bulan_privat']} {year}"
+        else:
+            c["bulan_privat"] = MONTHS.get(timezone.now().month)
+            c["site_title"] = f"Rekap Privat {c['bulan_privat']} {timezone.now().year}"
+            c["jumlah_privat"] = Private.objects.filter(tanggal_bimbingan__month=timezone.now().month, tanggal_bimbingan__year=timezone.now().year).all()
         return c
     

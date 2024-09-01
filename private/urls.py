@@ -2,7 +2,7 @@ from django.urls import path
 from private.views import PrivateIndexView, PrivateCreateView, PrivateDetailView, PrivateUpdateView, PrivateDeleteView, \
                             SubjectIndexView, SubjectCreateView, SubjectDetailView, SubjectUpdateView, SubjectDeleteView, \
                             GroupIndexView, GroupCreateView, GroupDetailView, GroupUpdateView, GroupDeleteView,\
-                            GroupGetView, GroupQuickUploadView, PrivatePrintView
+                            GroupGetView, GroupQuickUploadView, PrivatePrintView, PrivateOptionsView
 app_name = "private"
 
 urlpatterns = [
@@ -12,6 +12,7 @@ urlpatterns = [
     path("update/<int:pk>/", PrivateUpdateView.as_view(), name="private-update"),
     path("delete/<int:pk>/", PrivateDeleteView.as_view(), name="private-delete"),
     path("print/", PrivatePrintView.as_view(), name="private-print"),
+    path("options/", PrivateOptionsView.as_view(), name="private-options"),
     path("subjects/", SubjectIndexView.as_view(), name="subject-index"),
     path("subject/create/", SubjectCreateView.as_view(), name="subject-create"),
     path("subject/detail/<int:pk>/", SubjectDetailView.as_view(), name="subject-detail"),

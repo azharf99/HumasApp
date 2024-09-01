@@ -1,0 +1,48 @@
+{% include 'base.html' %}
+
+{% block content %}
+<main class="p-4 sm:ml-64 overflow-auto">
+    <h1 class="px-2 text-2xl font-bold text-blue-500 dark:text-white">Private Print Options</h1>
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2">
+        <a href="{% url 'dashboard' %}" class="pl-2">Dashboard</a>
+    <p class="text-2xl">
+        &triangleright;
+    </p>
+    <a href="{% url 'private:private-index' %}">Private List</a>
+    <p class="text-2xl">
+        &triangleright;
+    </p>
+    <a href="">Private Print Options</a>
+    </div>
+
+    <form method="get" action="{% url 'private:private-print' %}" class="my-6 flex flex-col justify-center items-center">
+      {% for data in object_list %}
+          <fieldset class="flex gap-2">
+            <legend class="font-semibold my-2">Pilih Bulan</legend>
+            {% for month in data.month %}
+            <input type="radio" name="month" id="month{{forloop.counter}}" value="{{month.value}}" required/> 
+            <label for="month{{forloop.counter}}">{{month.nama}}</label>
+            {% endfor %} 
+          </fieldset>
+          <fieldset class="flex gap-2 my-4">
+            <legend class="font-semibold my-2">Pilih Tahun</legend>
+            {% for year in data.year %}
+            <input type="radio" name="year" id="year{{forloop.counter}}" value="{{year}}" required/>
+            <label for="year{{forloop.counter}}">{{year}}</label>
+            {% endfor %} 
+          </fieldset>
+          <button type="submit" id="submit" class="text-white p-2 bg-blue-500 rounded-md cursor-pointer hover:bg-fuchsia-500 my-4">🖨️ Print Laporan</button>
+          <div id="loading" class="hidden flex gap-4 justify-center items-center text-white p-2 bg-blue-500 rounded-md cursor-pointer my-4">
+            <div class="loader"></div>
+            <p>Loading ...</p>
+          </div>
+          {% endfor %} 
+    </form>
+
+</main>
+
+{% include 'loader.html' %}
+
+
+{% endblock content %}
