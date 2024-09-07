@@ -1,5 +1,6 @@
 from typing import Any
 from django.core.exceptions import PermissionDenied
+from django.db.models.query import QuerySet
 from django.contrib import messages
 from django.forms import BaseModelForm
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -7,6 +8,7 @@ from django.urls import reverse, reverse_lazy
 from pandas import read_csv, read_excel
 from alumni.forms import CSVFilesForm, FilesForm
 from alumni.models import CSVFiles, Files
+from private.models import Private
 from students.models import Student, Class
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -248,6 +250,22 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
 class StudentPrivateView(LoginRequiredMixin, ListView):
     model = Student
     template_name = "students/student_private_list.html"
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        c = super().get_context_data(**kwargs)
+        month = self.request.GET.get("month")
+        year = self.request.GET.get("year")
+        if month and year:
+            object_list = self.get_queryset()
+            for obj in object_list:
+                obj.filtered_private_set = obj.private_set.filter(
+                    tanggal_bimbingan__month=month,
+                    tanggal_bimbingan__year=year
+                )
+            c["filtered_object_list"] = object_list
+        c["month"] = month
+        c["year"] = year
+        return c
 
 
 class StudentUpdateView(LoginRequiredMixin, UpdateView):

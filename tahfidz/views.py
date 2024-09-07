@@ -138,7 +138,7 @@ class TahfidzQuickCSVUploadView(LoginRequiredMixin, CreateView):
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
-        c["form_name"] = "Import Excel"
+        c["form_name"] = "Import CSV"
         return c
     
 

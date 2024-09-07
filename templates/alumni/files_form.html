@@ -41,9 +41,9 @@
           {% endfor %}
           {% endif %}
           <h2 class="font-semibold text-xl">{{form_name}} Form</h2>
-          {% if form_name == "Import CSV" %}
+          {% if form_name == "Import CSV Alumni" %}
           <p cla>Unduh template file <a href="{% static 'files/format_upload_data.csv' %}" class="p-1 text-green-500 font-bold hover:bg-fuchsia-500 bg-green-50 rounded-md">di sini</a></p>
-          {% elif form_name == "Import Excel" %}
+          {% elif form_name == "Import Excel Alumni" %}
           <p cla>Unduh template file <a href="{% static 'files/format_upload_data.xlsx' %}" class="p-1 text-green-500 font-bold hover:bg-fuchsia-500 bg-green-50 rounded-md">di sini</a></p>
           {% endif %}
           <form action="" method="post" enctype="multipart/form-data" class="flex flex-col gap-2 md:w-3/4 w-full">

@@ -17,13 +17,25 @@ from userlog.models import UserLog
 from utils.whatsapp import send_WA_create_update_delete
 from django.core.exceptions import PermissionDenied
 from django.utils import timezone
-from django.db.models import F, Func, Value, CharField, Count
-from django.db.models.functions import Cast, ExtractMonth, ExtractYear, Concat
+from django.db.models import Count
 
 
 # Private Controllers
 class PrivateIndexView(ListView):
     model = Private
+
+    def get_queryset(self) -> QuerySet[Any]:
+        month = self.request.GET.get("month")
+        year = self.request.GET.get("year")
+        if month and year:
+            return Private.objects.filter(tanggal_bimbingan__month=month, tanggal_bimbingan__year=year)
+        return super().get_queryset()
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        c = super().get_context_data(**kwargs)
+        c["month"] = self.request.GET.get("month")
+        c["year"] = self.request.GET.get("year")
+        return c
 
 class PrivateCreateView(LoginRequiredMixin, CreateView):
     model = Private
@@ -44,7 +56,7 @@ class PrivateCreateView(LoginRequiredMixin, CreateView):
             app="PRIVATE",
             message=f"berhasil menambahkan data privat {self.object}",
         )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data privat {self.object}', 'private/')
+        send_WA_create_update_delete(self.request.user.teacher.no_hp, f'{self.request.user.teacher} menambahkan', f'data privat {self.object}', 'private/')
         messages.success(self.request, "Input Laporan Berhasil!")
         return HttpResponseRedirect(self.get_success_url())
     
