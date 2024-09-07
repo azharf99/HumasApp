@@ -263,6 +263,9 @@ class StudentPrivateView(LoginRequiredMixin, ListView):
                     tanggal_bimbingan__year=year
                 )
             c["filtered_object_list"] = object_list
+        else:
+            c["filtered_object_list"] = self.get_queryset()
+            c["no_filter"] = True
         c["month"] = month
         c["year"] = year
         return c

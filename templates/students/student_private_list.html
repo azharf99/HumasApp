@@ -85,9 +85,15 @@
             <td class="p-2 border border-gray-400">{{object.nama_siswa}}</td>
             <td class="p-2 border border-gray-400 text-center">{{object.kelas.nama_kelas|default:"-"}}</td>
             <td class="p-2 border border-gray-400 text-end">
-              {% for obj in object.filtered_private_set.all %}
-              <p>{{obj.pelajaran}} ({{obj.tanggal_bimbingan|date:"j F Y"}})</p>
-              {% endfor %}
+              {% if no_filter %}
+                {% for obj in object.private_set.all %}
+                  <p>{{obj.pelajaran}} ({{obj.tanggal_bimbingan|date:"j F Y"}})</p>
+                {% endfor %}
+              {% else %}
+                {% for obj in object.filtered_private_set.all %}
+                  <p>{{obj.pelajaran}} ({{obj.tanggal_bimbingan|date:"j F Y"}})</p>
+                {% endfor %}
+              {% endif %}
             </td>
           </tr>
           {% endfor %}
