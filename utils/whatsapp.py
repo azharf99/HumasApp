@@ -36,13 +36,13 @@ def send_WA_create_update_delete(phone="085701570100", action="", messages="", t
         url = "https://jogja.wablas.com/api/v2/send-message"
         payload = {
             "data": [
-#                 {
-#                     'phone': '6281293034867-1565170276',
-#                     'message': f'''*[NOTIFIKASI PRIVATE]*
-# Data masuk: {action} {messages}.
-# Detail: https://humas.smasitalbinaa.com/{type}{slug}''',
-#                     'isGroup': 'true'
-#                 },
+                {
+                    'phone': '6285721205284-1635313652',
+                    'message': f'''*[NOTIFIKASI PRIVATE]*
+Data masuk: {action} {messages}.
+Detail: https://humas.smasitalbinaa.com/{type}{slug}''',
+                    'isGroup': 'true'
+                },
                 {
                     'phone': '6285721205284',
                     'message': f'''*[NOTIFIKASI PRIVATE]*
