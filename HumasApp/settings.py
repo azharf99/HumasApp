@@ -101,6 +101,8 @@ DATABASES = {
     }
 }
 
+CONN_HEALTH_CHECKS = True
+
 # DATABASES = {
 #         'default':{
 #             'ENGINE': 'django.db.backends.mysql',
