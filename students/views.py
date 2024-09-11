@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.forms import BaseModelForm
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from pandas import read_csv, read_excel
 from alumni.forms import CSVFilesForm, FilesForm
 from alumni.models import CSVFiles, Files
@@ -264,8 +265,13 @@ class StudentPrivateView(ListView):
                 )
             c["filtered_object_list"] = object_list
         else:
-            c["filtered_object_list"] = self.get_queryset()
-            c["no_filter"] = True
+            object_list = self.get_queryset()
+            for obj in object_list:
+                obj.filtered_private_set = obj.private_set.filter(
+                    tanggal_bimbingan__month=timezone.now().month,
+                    tanggal_bimbingan__year=timezone.now().year
+                )
+            c["filtered_object_list"] = object_list
         c["month"] = month
         c["year"] = year
         return c
