@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.core.handlers.wsgi import WSGIRequest
+from django.core.cache import cache
 from django.forms import BaseModelForm
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -9,7 +10,7 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView,
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpRequest, HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.db.models.query import QuerySet
 from django.contrib import messages
 from django.template.response import TemplateResponse
@@ -22,8 +23,9 @@ from typing import Any
 class MyLoginView(LoginView):
     redirect_authenticated_user = True
 
-    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        return super().post(request, *args, **kwargs)
+    def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        cache.clear()
+        return super().get(request, *args, **kwargs)
     
     def form_invalid(self, form):
         messages.error(self.request,'Invalid username or password')
@@ -101,6 +103,7 @@ class MyLogoutView(LogoutView):
         )
         send_WA_login_logout(request.user.teacher.no_hp, 'logout', 'Selamat jalan!')
         messages.success(self.request, "Selamat Jalan, Logout Berhasil! :)")
+        cache.clear()
         return super().post(request, *args, **kwargs)
     
 
