@@ -247,7 +247,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
     model = Student
 
 
-class StudentPrivateView(LoginRequiredMixin, ListView):
+class StudentPrivateView(ListView):
     model = Student
     template_name = "students/student_private_list.html"
     
