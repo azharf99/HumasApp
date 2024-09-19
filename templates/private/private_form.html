@@ -99,6 +99,7 @@
                 optionGroup1.classList = "font-bold my-4"
                 data["utama"].forEach((option) => {
                     const newOption = document.createElement('option');
+                    newOption.classList.add("bg-green-500", "text-white");
                     newOption.value = option.santri;
                     newOption.textContent = `(${option.santri__kelas__nama_kelas}) ${option.santri__nama_siswa}`;
                     optionGroup1.appendChild(newOption);
