@@ -55,10 +55,30 @@
               {% for field in form %}
                   <div class="flex flex-col">
                       {{ field.errors }}
-                      {{ field.label_tag }} {{ field }}
+                      {{ field.label_tag }}
+                      
+                      
+                      {% if field.name == "kehadiran_santri" %}
+                      <p class="help text-xs my-2 italic font-bold" id="{{ field.auto_id }}_helptext">
+                        {% if form_name == "Update" %}
+                        Tempatkan kursor di paling akhir dari daftar santri. Ketik nama santri dan klik/pilih.
+                        {% else %}
+                        Ketik nama santri dan klik/pilih.
+                        {% endif %}
+                        </p>
+                      {% endif %}
+                      {{ field }}
                       {% if field.help_text %}
-                        <p class="help text-xs" id="{{ field.auto_id }}_helptext">
+                      <p class="help text-xs my-2 italic font-bold" id="{{ field.auto_id }}_helptext">
+                          {% if field.name == "kehadiran_santri" %}
+                            {% if form_name == "Update" %}
+                            Tempatkan kursor di paling akhir dari daftar santri. Ketik nama santri dan klik/pilih.
+                            {% else %}
+                            Ketik nama santri dan klik/pilih.
+                            {% endif %}
+                          {% else %}
                           {{ field.help_text|safe }}
+                          {% endif %}
                         </p>
                       {% endif %}
                   </div>
@@ -77,51 +97,63 @@
 
   </main>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
   <script>
-    document.getElementById('id_kelompok').addEventListener('change', function() {
-        const firstSelectValue = this.value;
-        const secondSelect = document.getElementById('id_kehadiran_santri');
+      $(document).ready(function () {
+          $('#id_kehadiran_santri').selectize({
+              sortField: 'text',
+              maxItems: 50,
+          });
+      });
+  </script>
 
-        // Clear current options
-        secondSelect.innerHTML = '';
+  <script>
+    // document.getElementById('id_kelompok').addEventListener('change', function() {
+    //     const firstSelectValue = this.value;
+    //     const secondSelect = document.getElementById('id_kehadiran_santri');
 
-        // URL for the API request (replace with your actual API endpoint)
-        // const apiUrl = `http://127.0.0.1:8000/private/get-group/?query=${firstSelectValue}`;
-        const apiUrl = `https://humas.smasitalbinaa.com/private/get-group/?query=${firstSelectValue}`;
+    //     // Clear current options
+    //     secondSelect.innerHTML = '';
 
-        // Fetch options from the API
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
+    //     // URL for the API request (replace with your actual API endpoint)
+    //     // const apiUrl = `http://127.0.0.1:8000/private/get-group/?query=${firstSelectValue}`;
+    //     const apiUrl = `https://humas.smasitalbinaa.com/private/get-group/?query=${firstSelectValue}`;
 
-                const optionGroup1 = document.createElement("OPTGROUP");
-                optionGroup1.label = "Data Utama"
-                optionGroup1.classList = "font-bold my-4"
-                data["utama"].forEach((option) => {
-                    const newOption = document.createElement('option');
-                    newOption.classList.add("bg-green-500", "text-white");
-                    newOption.value = option.santri;
-                    newOption.textContent = `(${option.santri__kelas__nama_kelas}) ${option.santri__nama_siswa}`;
-                    optionGroup1.appendChild(newOption);
-                  });
-                secondSelect.appendChild(optionGroup1);
+    //     // Fetch options from the API
+    //     fetch(apiUrl)
+    //         .then(response => response.json())
+    //         .then(data => {
+
+    //             const optionGroup1 = document.createElement("OPTGROUP");
+    //             optionGroup1.label = "Data Utama"
+    //             optionGroup1.classList = "font-bold my-4"
+    //             data["utama"].forEach((option) => {
+    //                 const newOption = document.createElement('option');
+    //                 newOption.classList.add("bg-green-500", "text-white");
+    //                 newOption.value = option.santri;
+    //                 newOption.textContent = `(${option.santri__kelas__nama_kelas}) ${option.santri__nama_siswa}`;
+    //                 optionGroup1.appendChild(newOption);
+    //               });
+    //             secondSelect.appendChild(optionGroup1);
                 
-                const optionGroup2 = document.createElement("OPTGROUP");
-                optionGroup2.label = "Data Santri Tambahan"
-                optionGroup2.classList = "font-semibold my-4"
-                data["ekstra"].forEach((option) => {
-                  const newOption = document.createElement('option');
-                  newOption.value = option.id;
-                  newOption.textContent = `(${option.kelas__nama_kelas}) ${option.nama_siswa}`;
-                  optionGroup2.appendChild(newOption);
-                });
-                secondSelect.appendChild(optionGroup2);
-            })
-            .catch(error => {
-                console.error('Error fetching options:', error);
-                // Handle errors here
-            });
-    });
+    //             const optionGroup2 = document.createElement("OPTGROUP");
+    //             optionGroup2.label = "Data Santri Tambahan"
+    //             optionGroup2.classList = "font-semibold my-4"
+    //             data["ekstra"].forEach((option) => {
+    //               const newOption = document.createElement('option');
+    //               newOption.value = option.id;
+    //               newOption.textContent = `(${option.kelas__nama_kelas}) ${option.nama_siswa}`;
+    //               optionGroup2.appendChild(newOption);
+    //             });
+    //             secondSelect.appendChild(optionGroup2);
+    //         })
+    //         .catch(error => {
+    //             console.error('Error fetching options:', error);
+    //             // Handle errors here
+    //         });
+    // });
 
   </script>
   

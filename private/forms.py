@@ -40,11 +40,15 @@ class PrivateCreateForm(forms.ModelForm):
         teacher_list = subjects.values_list("pembimbing", flat=True).distinct()
         
         if user.teacher.id in teacher_list:
-            student_list = group.values_list("santri", flat=True).distinct()
+            # student_list = group.values_list("santri", flat=True).distinct()
             self.fields['pembimbing'].queryset = Teacher.objects.filter(pk__in=teacher_list)
-            self.fields['kehadiran_santri'].queryset = Student.objects.filter(pk__in=student_list)
+            # self.fields['kehadiran_santri'].queryset = Student.objects.filter(pk__in=student_list)
+            self.fields['kehadiran_santri'].queryset = Student.objects.filter(kelas__nama_kelas__startswith="XII")
             self.fields['kelompok'].queryset = group
             self.fields['pelajaran'].queryset = subjects
+        else:
+            self.fields['kehadiran_santri'].queryset = Student.objects.filter(kelas__nama_kelas__startswith="XII")
+
 
     
     class Meta:
@@ -76,6 +80,8 @@ class PrivateUpdateForm(forms.ModelForm):
             self.fields['pembimbing'].queryset = Teacher.objects.filter(pk__in=teacher_list)
             self.fields['kehadiran_santri'].queryset = Student.objects.filter(kelas__nama_kelas__startswith="XII")
             self.fields['pelajaran'].queryset = subjects
+        else:
+            self.fields['kehadiran_santri'].queryset = Student.objects.filter(kelas__nama_kelas__startswith="XII")
     
     class Meta:
         model = Private
