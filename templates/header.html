@@ -30,9 +30,18 @@
       </label>
       {% if request.user.is_authenticated %}
       <a href="{% url 'app-index' %}" class="mx-4 text-sm font-semibold leading-6 text-gray-100 px-2 border rounded-md">Home</a>
-      <div class="rounded-full border-2 border-white mr-4 dark:border-fuchsia-400">
-        {% load thumbnail %}
-        <img class="rounded-full" src="{{request.user.teacher.foto|thumbnail_url:'medium'}}" alt="Profile" height="30px" width="30px">
+      <div class="px-4 relative">
+        <div class="rounded-full border-2 border-white mr-4 cursor-pointer dark:border-fuchsia-400" id="avatar">
+          {% load thumbnail %}
+          <img class="rounded-full" src="{{request.user.teacher.foto|thumbnail_url:'medium'}}" alt="Profile" height="30px" width="30px">
+        </div>
+        <div class="absolute grid my-2 z-10 left-0 p-2 bg-white dark:bg-gray-800 rounded-md hidden w-full" id="user_menu">
+          <a href="{% url 'profile' %}" class="p-1 my-2 text-xs font-semibold hover:text-blue-700">Profile</a>
+          <form action="{% url 'logout' %}" method="post" class="hover:bg-indigo-200 dark:hover:bg-gray-700 rounded-lg">
+            {% csrf_token %}
+            <input type="submit" value="Keluar &rarr;" class="text-xs p-1 text-red-500 font-semibold leading-6 py-1 cursor-pointer">
+          </form>
+        </div>
       </div>
       {% else %}
       <a href="{% url 'app-index' %}" class="mx-4 text-sm font-semibold leading-6 text-gray-100 px-2 border rounded-md">Home</a>
@@ -79,9 +88,18 @@
       </label>
       {% if request.user.is_authenticated %}
       <a href="{% url 'app-index' %}" class="mx-4 text-sm font-semibold leading-6 text-gray-100 px-2 border rounded-md">Home</a>
-      <div class="rounded-full mx-2 border-2 border-white mr-4 dark:border-fuchsia-400">
-        {% load thumbnail %}
-        <img class="rounded-full" src="{{request.user.teacher.foto|thumbnail_url:'medium'}}" alt="Profile" height="30px" width="30px">
+      <div class="px-4 relative">
+        <div class="rounded-full mx-2 border-2 border-white mr-4 cursor-pointer dark:border-fuchsia-400" id="avatar2">
+          {% load thumbnail %}
+          <img class="rounded-full" src="{{request.user.teacher.foto|thumbnail_url:'medium'}}" alt="Profile" height="30px" width="30px">
+        </div>
+        <div class="absolute grid my-2 z-10 left-0 p-2 bg-white dark:bg-gray-800 rounded-md hidden w-full" id="user_menu2">
+          <a href="{% url 'profile' %}" class="p-1 my-2 text-xs font-semibold hover:text-blue-700">Profile</a>
+          <form action="{% url 'logout' %}" method="post" class="hover:bg-indigo-200 dark:hover:bg-gray-700 rounded-lg">
+            {% csrf_token %}
+            <input type="submit" value="Keluar &rarr;" class="text-xs p-1 text-red-500 font-semibold leading-6 py-1 cursor-pointer">
+          </form>
+        </div>
       </div>
       {% else %}
       <a href="{% url 'app-index' %}" class="mx-4 text-sm font-semibold leading-6 text-gray-100 px-2 border rounded-md">Home</a>
@@ -91,3 +109,23 @@
     </div>
   </nav>
 </header>
+
+
+<script>
+  const avatar = document.getElementById("avatar");
+  const user_menu = document.getElementById("user_menu");
+  if (avatar){
+    avatar.addEventListener("click", ()=>{
+        user_menu.classList.toggle("hidden")
+        console.log("Haii")
+    })
+  }
+  const avatar2 = document.getElementById("avatar2");
+  const user_menu2 = document.getElementById("user_menu2");
+  if (avatar2){
+    avatar2.addEventListener("click", ()=>{
+        user_menu2.classList.toggle("hidden")
+        console.log("Haii")
+    })
+  }
+</script>
