@@ -334,6 +334,10 @@ class DownloadPrivateListView(ListView):
 
     
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if request.user.is_superuser:
+            return super().get(request, *args, **kwargs)
+        raise PermissionDenied
+
         month_now, year_now = timezone.now().month, timezone.now().year
         try:
             month = int(self.request.GET.get("month", default=f'{month_now}')) if 0 < int(month) <= 12 else month_now
