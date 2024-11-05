@@ -69,6 +69,10 @@
   <div class="grid grid-cols-1">
     <!-- Analytics Table -->
     <div class="p-4 mx-2 my-4 bg-white dark:bg-slate-800 rounded-md shadow-lg overflow-auto">
+      <div class="text-end mb-2">
+        {% url 'student:student-private-download' as url_with_param %}
+        <a href="{{url_with_param}}?month={{month}}&year={{year}}" class="p-2 bg-blue-500 rounded-md text-white">⬇️ Download</a>
+      </div>
       {% if object_list %}
       <table class="table-auto border-collapse w-full">
         <caption class="mb-4 text-xl font-semibold">Data Private Santri</caption>
@@ -85,15 +89,9 @@
             <td class="p-2 border border-gray-400">{{object.nama_siswa}}</td>
             <td class="p-2 border border-gray-400 text-center">{{object.kelas.nama_kelas|default:"-"}}</td>
             <td class="p-2 border border-gray-400 text-end">
-              {% if no_filter %}
-                {% for obj in object.private_set.all %}
-                  <p>{{obj.pelajaran}} ({{obj.tanggal_bimbingan|date:"j F Y"}})</p>
-                {% endfor %}
-              {% else %}
-                {% for obj in object.filtered_private_set.all %}
-                  <p>{{obj.pelajaran}} ({{obj.tanggal_bimbingan|date:"j F Y"}})</p>
-                {% endfor %}
-              {% endif %}
+              {% for obj in object.filtered_private_set.all %}
+                <p>{{obj.pelajaran}} ({{obj.tanggal_bimbingan|date:"j F Y"}})</p>
+              {% endfor %}
             </td>
           </tr>
           {% endfor %}

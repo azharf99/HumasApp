@@ -187,13 +187,13 @@ THUMBNAIL_ALIASES = {
 }
 
 from django.utils import timezone
-year_now = timezone.now().month
+year_now = timezone.now().year
 if timezone.now().month > 6:
     TAHUN_AJARAN = f"{year_now}/{year_now+1}"
-    AHUN_AJARAN_STRIPPED = f"{year_now}-{year_now+1}"
+    TAHUN_AJARAN_STRIPPED = f"{year_now}-{year_now+1}"
 else:
     TAHUN_AJARAN = f"{year_now-1}/{year_now}"
-    AHUN_AJARAN_STRIPPED = f"{year_now-1}-{year_now}"
+    TAHUN_AJARAN_STRIPPED = f"{year_now-1}-{year_now}"
 TANGGAL_TAHUN_AJARAN = timezone.make_aware(timezone.datetime(2024, 6, 1, 1, 1, 1))
 
 
