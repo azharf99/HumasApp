@@ -310,9 +310,11 @@ class StudentPrivateView(ListView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
         month_now, year_now = timezone.now().month, timezone.now().year
+        month_query = self.request.GET.get("month", default=f'{month_now}')
+        year_query = self.request.GET.get("year", default=f'{year_now}')
         try:
-            month = int(self.request.GET.get("month", default=f'{month_now}')) if 0 < int(month) <= 12 else month_now
-            year = int(self.request.GET.get("year", default=f'{year_now}')) if 0 < int(year) <= 9999 else year_now
+            month = int(month_query) if 0 < int(month_query) <= 12 else month_now
+            year = int((year_query)) if 0 < int(month_query) <= 9999 else year_now
         except:
             month = month_now
             year = year_now
@@ -337,9 +339,11 @@ class DownloadPrivateListView(ListView):
         if request.user.is_superuser:
 
             month_now, year_now = timezone.now().month, timezone.now().year
+            month_query = self.request.GET.get("month", default=f'{month_now}')
+            year_query = self.request.GET.get("year", default=f'{year_now}')
             try:
-                month = int(self.request.GET.get("month", default=f'{month_now}')) if 0 < int(month) <= 12 else month_now
-                year = int(self.request.GET.get("year", default=f'{year_now}')) if 0 < int(year) <= 9999 else year_now
+                month = int(month_query) if 0 < int(month_query) <= 12 else month_now
+                year = int((year_query)) if 0 < int(month_query) <= 9999 else year_now
             except:
                 month = month_now
                 year = year_now
