@@ -46,14 +46,14 @@ def send_WA_create_update_delete(phone="085701570100", action="", messages="", t
 #                     'phone': '6285721205284-1635313652',
 #                     'message': f'''*[NOTIFIKASI PRIVATE]*
 # Data masuk: {action} {messages}.
-# Detail: https://humas.smasitalbinaa.com/{type}{slug}''',
+# Detail: https://humas.albinaa.sch.id/{type}{slug}''',
 #                     'isGroup': 'true'
 #                 },
 #                 {
 #                     'phone': '6285721205284',
 #                     'message': f'''*[NOTIFIKASI PRIVATE]*
 # Data masuk: {action} {messages}.
-# Detail: https://humas.smasitalbinaa.com/{type}{slug}'''
+# Detail: https://humas.albinaa.sch.id/{type}{slug}'''
 #                 }
 #             ]
 #         }
@@ -74,7 +74,7 @@ def send_WA_create_update_delete(phone="085701570100", action="", messages="", t
     message = f'''*[NOTIFIKASI HUMAS SMAS IT AL BINAA]*
 Anda berhasil {action} *{messages}*.
 Detail laporan:
-https://humas.smasitalbinaa.com/{type}{slug}
+https://humas.albinaa.sch.id/{type}{slug}
 
 _Ini adalah pesan otomatis, jangan dibalas._'''
     # url = f"https://jogja.wablas.com/api/send-message?phone={phone}&message={message}&token={token}"

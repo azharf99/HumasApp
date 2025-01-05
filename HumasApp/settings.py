@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['humas.pythonanywhere.com', 'humas.smasitalbinaa.com', '127.0.0.1']
+ALLOWED_HOSTS = ['humas.pythonanywhere.com', 'humas.albinaa.sch.id', '127.0.0.1']
 
 
 ID_DEVICE = os.getenv('ID_DEVICE')
@@ -203,8 +203,11 @@ TANGGAL_TAHUN_AJARAN = timezone.make_aware(timezone.datetime(2024, 6, 1, 1, 1, 1
 
 
 CORS_ALLOWED_ORIGINS = [
-    "https://smasitalbinaa.com",
-    "https://humas.smasitalbinaa.com",
+    "https://albinaa.sch.id",
+    "https://humas.albinaa.sch.id",
+    # "http://172.0.0.1",
+    # "https://smasitalbinaa.com",
+    # "https://humas.smasitalbinaa.com",
 ]
 
 
