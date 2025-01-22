@@ -23,6 +23,7 @@ from django.db.models import Count
 # Private Controllers
 class PrivateIndexView(ListView):
     model = Private
+    paginate_by = 51
 
     def get_queryset(self) -> QuerySet[Any]:
         month = self.request.GET.get("month")
