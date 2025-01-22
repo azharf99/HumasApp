@@ -27,7 +27,7 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 if not DEBUG:
     ALLOWED_HOSTS = ['humas.pythonanywhere.com', 'humas.albinaa.sch.id']
@@ -156,6 +156,7 @@ else:
             }
         }
 
+CONN_HEALTH_CHECKS =  True
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

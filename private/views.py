@@ -28,8 +28,9 @@ class PrivateIndexView(ListView):
         month = self.request.GET.get("month")
         year = self.request.GET.get("year")
         if month and year:
-            return Private.objects.filter(tanggal_bimbingan__month=month, tanggal_bimbingan__year=year)
-        return super().get_queryset()
+            return Private.objects.prefetch_related("kehadiran_santri", "kelompok__santri", "pembimbing", "pelajaran__pembimbing", "kelompok__pelajaran")\
+                                .filter(tanggal_bimbingan__month=month, tanggal_bimbingan__year=year)
+        return super().get_queryset().prefetch_related("kehadiran_santri", "kelompok__santri", "pembimbing", "pelajaran", "kelompok__pelajaran")
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
@@ -384,7 +385,7 @@ class GroupGetView(LoginRequiredMixin, DetailView):
 class PrivateOptionsView(ListView):
     model = Private
     template_name = 'private/private_options.html'
-    queryset = Private.objects.values("tanggal_bimbingan__month", "tanggal_bimbingan__year").order_by().distinct()
+    queryset = Private.objects.prefetch_related("kehadiran_santri", "kelompok__santri", "pembimbing", "pelajaran__pembimbing", "kelompok__pelajaran").values("tanggal_bimbingan__month", "tanggal_bimbingan__year").order_by().distinct()
     
     def get_queryset(self) -> QuerySet[Any]:
         month_names = {
@@ -423,8 +424,8 @@ class PrivatePrintView(LoginRequiredMixin, ListView):
         month = self.request.GET.get("month")
         year = self.request.GET.get("year")
         if month and year:
-            return Private.objects.filter(tanggal_bimbingan__month=month, tanggal_bimbingan__year=year).values("pembimbing__nama_guru").annotate(dcount=Count("pelajaran"))
-        return Private.objects.filter(tanggal_bimbingan__month=timezone.now().month, tanggal_bimbingan__year=timezone.now().year).values("pembimbing__nama_guru").annotate(dcount=Count("pelajaran"))
+            return Private.objects.prefetch_related("kehadiran_santri", "kelompok__santri", "pembimbing", "pelajaran__pembimbing", "kelompok__pelajaran").filter(tanggal_bimbingan__month=month, tanggal_bimbingan__year=year).values("pembimbing__nama_guru").annotate(dcount=Count("pelajaran"))
+        return Private.objects.prefetch_related("kehadiran_santri", "kelompok__santri", "pembimbing", "pelajaran__pembimbing", "kelompok__pelajaran").filter(tanggal_bimbingan__month=timezone.now().month, tanggal_bimbingan__year=timezone.now().year).values("pembimbing__nama_guru").annotate(dcount=Count("pelajaran"))
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
@@ -448,11 +449,11 @@ class PrivatePrintView(LoginRequiredMixin, ListView):
 
         if month and year:
             c["bulan_privat"] = MONTHS.get(int(month))
-            c["jumlah_privat"] = Private.objects.filter(tanggal_bimbingan__month=month, tanggal_bimbingan__year=year).all()
+            c["jumlah_privat"] = Private.objects.prefetch_related("kehadiran_santri", "kelompok__santri", "pembimbing", "pelajaran__pembimbing", "kelompok__pelajaran").filter(tanggal_bimbingan__month=month, tanggal_bimbingan__year=year).all()
             c["site_title"] = f"Rekap Privat {c['bulan_privat']} {year}"
         else:
             c["bulan_privat"] = MONTHS.get(timezone.now().month)
             c["site_title"] = f"Rekap Privat {c['bulan_privat']} {timezone.now().year}"
-            c["jumlah_privat"] = Private.objects.filter(tanggal_bimbingan__month=timezone.now().month, tanggal_bimbingan__year=timezone.now().year).all()
+            c["jumlah_privat"] = Private.objects.prefetch_related("kehadiran_santri", "kelompok__santri", "pembimbing", "pelajaran__pembimbing", "kelompok__pelajaran").filter(tanggal_bimbingan__month=timezone.now().month, tanggal_bimbingan__year=timezone.now().year).all()
         return c
     

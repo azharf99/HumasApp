@@ -101,7 +101,9 @@
         <p class="mx-2 py-1">Catatan</p>
         <p class="mx-2 py-1"> : {{object.catatan_bimbingan|default:"-"}}</p>
         <p class="mx-2 py-1">Kehadiran Santri</p>
-        <p class="mx-2 py-1"> : {{object.kehadiran_santri.count|default:0}} santri</p>
+        {% with jumlah_santri=object.kehadiran_santri.count %}  
+        <p class="mx-2 py-1"> : {{jumlah_santri|default:0}} santri</p>
+        {% endwith %}  
       </div>
       {% if request.user.is_authenticated %}  
       <div class="flex gap-2 justify-center mt-4">
