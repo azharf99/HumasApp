@@ -11,14 +11,14 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
-
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -29,7 +29,10 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['humas.pythonanywhere.com', 'humas.albinaa.sch.id', '127.0.0.1']
+if not DEBUG:
+    ALLOWED_HOSTS = ['humas.pythonanywhere.com', 'humas.albinaa.sch.id']
+else:
+    ALLOWED_HOSTS = ['*']
 
 
 ID_DEVICE = os.getenv('ID_DEVICE')
@@ -59,6 +62,7 @@ INSTALLED_APPS = [
     "corsheaders",
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -69,6 +73,20 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+# Activate django debug toolbar
+TESTING = "test" in sys.argv
+
+if DEBUG and not TESTING:
+    INSTALLED_APPS = [
+        *INSTALLED_APPS,
+        "debug_toolbar",
+    ]
+    MIDDLEWARE = [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+        *MIDDLEWARE,
+    ]
 
 ROOT_URLCONF = 'HumasApp.urls'
 
@@ -103,22 +121,40 @@ DATABASES = {
 
 CONN_HEALTH_CHECKS = True
 
-# DATABASES = {
-#         'default':{
-#             'ENGINE': 'django.db.backends.mysql',
-#             'NAME' : os.getenv('DB_NAME'),
-#             'USER' : os.getenv('DB_USER'),
-#             'PASSWORD' : os.getenv('DB_PASSWORD'),
-#             'HOST' : os.getenv('DB_HOST'),
-#             'PORT' : os.getenv('DB_PORT'),
-#             "OPTIONS": {
-#                 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-#                 'charset': 'utf8mb4',
-#                 "autocommit": True,
-#             }
+if not DEBUG:
+    DATABASES = {
+            'default':{
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME' : os.getenv('MYSQL_DB_NAME'),
+                'USER' : os.getenv('MYSQL_DB_USER'),
+                'PASSWORD' : os.getenv('MYSQL_DB_PASSWORD'),
+                'HOST' : os.getenv('MYSQL_DB_HOST'),
+                'PORT' : os.getenv('MYSQL_DB_PORT'),
+                "OPTIONS": {
+                    'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+                    'charset': 'utf8mb4',
+                    "autocommit": True,
+                }
 
-#         }
-#     }
+            }
+        }
+else:
+    DATABASES = {
+            'default':{
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME' : os.getenv('LOCAL_MYSQL_DB_NAME'),
+                'USER' : os.getenv('LOCAL_MYSQL_DB_USER'),
+                'PASSWORD' : os.getenv('LOCAL_MYSQL_DB_PASSWORD'),
+                'HOST' : os.getenv('LOCAL_MYSQL_DB_HOST'),
+                'PORT' : os.getenv('LOCAL_MYSQL_DB_PORT'),
+                "OPTIONS": {
+                    'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+                    'charset': 'utf8mb4',
+                    "autocommit": True,
+                }
+
+            }
+        }
 
 
 # Password validation
@@ -173,6 +209,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SITE_ID = 1
 
+# EMAIL FOR SMTP
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_FILE_PATH = BASE_DIR / "tmp/app-messages"
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  
+EMAIL_PORT = 587
+EMAIL_USE_LOCALTIME = True
+EMAIL_USE_TLS = True
+
+if DEBUG:
+    # Django debug toolbar
+    INTERNAL_IPS = [
+        # ...
+        "127.0.0.1",
+        # ...
+    ]
 
 THUMBNAIL_ALIASES = {
     '': {
@@ -197,35 +250,69 @@ else:
 TANGGAL_TAHUN_AJARAN = timezone.make_aware(timezone.datetime(2024, 6, 1, 1, 1, 1))
 
 
-# CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ALLOW_CREDENTIALS = True
+if not DEBUG:
+
+    CORS_ALLOWED_ORIGINS = [
+        "https://humas.pythonanywhere.com",
+        "https://pythonanywhere.com",
+        "https://humas.albinaa.sch.id",
+        "http://localhost:8080",
+        "http://127.0.0.1:8000",
+        "http://127.0.0.1:9000",
+    ]
+
+    CORS_ALLOW_METHODS = (
+        "DELETE",
+        "GET",
+        "OPTIONS",
+        "PATCH",
+        "POST",
+        "PUT",
+    )
+
+    CORS_ALLOW_HEADERS = (
+        "accept",
+        "authorization",
+        "content-type",
+        "user-agent",
+        "x-csrftoken",
+        "x-requested-with",
+    )
+
+    CSRF_TRUSTED_ORIGINS = [
+        "https://humas.pythonanywhere.com",
+        "https://pythonanywhere.com",
+        "https://humas.albinaa.sch.id",
+        "http://localhost:8080",
+        "http://127.0.0.1:8000",
+        "http://127.0.0.1:9000",
+    ]
+
+if not DEBUG:
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    X_FRAME_OPTIONS = 'DENY'
 
 
-
-CORS_ALLOWED_ORIGINS = [
-    "https://albinaa.sch.id",
-    "https://humas.albinaa.sch.id",
-    # "http://172.0.0.1",
-    # "https://smasitalbinaa.com",
-    # "https://humas.smasitalbinaa.com",
-]
-
-
-CORS_ALLOW_HEADERS = (
-    "accept",
-    "authorization",
-    "content-type",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-)
-
-
-CORS_ALLOW_METHODS = (
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-)
+if not DEBUG:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'file': {
+                'level': 'DEBUG',
+                'class': 'logging.FileHandler',
+                'filename': os.path.join(BASE_DIR, 'logs', 'app.log'),
+            },
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['file'],
+                'level': 'DEBUG',
+                'propagate': True,
+            },
+        },
+    }

@@ -121,16 +121,14 @@ class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
         try:
             for i in range(row):
                 Alumni.objects.update_or_create(
-                    nis = df.iloc[i, 0],
-                    nisn = df.iloc[i, 1],
                     name = df.iloc[i, 2],
+                    group = df.iloc[i, 3],
                     defaults=dict(
                         nis = df.iloc[i, 0],
                         nisn = df.iloc[i, 1],
-                        name = df.iloc[i, 2],
                         group = df.iloc[i, 3],
                         birth_place = df.iloc[i, 4],
-                        birth_date = df.iloc[i, 5],
+                        birth_date = df.iloc[i, 5] or None,
                         gender = df.iloc[i, 6],
                         address = df.iloc[i, 7],
                         city = df.iloc[i, 8],
@@ -157,8 +155,8 @@ class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
                         photo = df.iloc[i, 29],
                     )
                 )
-        except:
-            messages.error(self.request, "Data pada Excel TIDAK SESUAI FORMAT! Mohon sesuaikan dengan format yang ada. Hubungi Administrator jika kesulitan.")
+        except Exception as e:
+            messages.error(self.request, f"Error: {e}.")
             return HttpResponseRedirect(reverse("alumni:alumni-quick-upload"))
         UserLog.objects.create(
             user = self.request.user.teacher,
