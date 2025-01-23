@@ -58,7 +58,9 @@ class AlumniSearchView(ListView):
                                          Q(nisn__icontains=query)|
                                          Q(group__icontains=query)|
                                          Q(graduate_year__icontains=query)|
-                                         Q(undergraduate_university__icontains=query))
+                                         Q(undergraduate_university__icontains=query)|
+                                         Q(undergraduate_university_entrance__icontains=query)|
+                                         Q(undergraduate_department__icontains=query))
             if len(data) > 0:
                 messages.success(request, f"{len(data)} Data Berhasil Ditemukan!")
             else:
