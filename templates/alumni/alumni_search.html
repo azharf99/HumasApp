@@ -60,10 +60,10 @@
         <div class="grid grid-cols-2">
           <p>Angkatan</p>
           <p>: {{object.group}}</p>
-          <p>Tahun Lulus</p>
-          <p>: {{object.graduate_year}}</p>
-          <p class="text-balance">Pekerjaan</p>
-          <p class="text-balance">: {{object.job|default:""}} {{object.company_name}}</p>
+          <p>Jalur Masuk:</p>
+          <p>: {{object.undergraduate_university_entrance|default:"-"}}</p>
+          <p class="text-balance">Jurusan/Prodi</p>
+          <p class="text-balance">: {{object.undergraduate_department|default:"-"}}</p>
           <p>Pendidikan Terakhir</p>
           <p>: {{object.undergraduate_university|default:""}}</p>
         </div>

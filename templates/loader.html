@@ -19,6 +19,12 @@
     const submit = document.getElementById("submit");
     const loading = document.getElementById("loading");
 
+      // Reset the button state on page load
+    window.addEventListener("pageshow", () => {
+      submit.classList.remove("hidden");
+      loading.classList.add("hidden");
+    });
+    
     document.addEventListener("submit", ()=>{
       submit.classList.add("hidden");
       loading.classList.remove("hidden");
