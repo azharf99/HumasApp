@@ -14,7 +14,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from private.forms import PrivateCreateForm, PrivateUpdateForm, SubjectForm, GroupForm
 from students.models import Student
 from userlog.models import UserLog
-from utils.whatsapp import send_WA_create_update_delete
+from utils.whatsapp_albinaa import send_WA_create_update_delete
 from django.core.exceptions import PermissionDenied
 from django.utils import timezone
 from django.db.models import Count

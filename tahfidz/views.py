@@ -13,7 +13,7 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin
 from tahfidz.forms import TahfidzForm
 from userlog.models import UserLog
-from utils.whatsapp import send_WA_create_update_delete
+from utils.whatsapp_albinaa import send_WA_create_update_delete
 from numpy import int8
 
 

@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from userlog.models import UserLog
 from userlog.forms import UserlogCreateForm
-from utils.whatsapp import send_WA_create_update_delete
+from utils.whatsapp_albinaa import send_WA_create_update_delete
 
 
 # Create your views here.

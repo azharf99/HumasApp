@@ -16,7 +16,7 @@ from django.contrib import messages
 from django.template.response import TemplateResponse
 from users.models import Teacher
 from users.forms import ProfileUpdateForm, UserCreateForm, UserUpdateForm, UserPasswordUpdateForm
-from utils.whatsapp import send_WA_login_logout, send_WA_create_update_delete
+from utils.whatsapp_albinaa import send_WA_login_logout, send_WA_create_update_delete
 from typing import Any
 
 # Create your views here.

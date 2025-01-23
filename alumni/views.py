@@ -11,7 +11,7 @@ from django.urls import reverse, reverse_lazy
 from alumni.models import Alumni, Files, CSVFiles
 from alumni.forms import AlumniForm, FilesForm, CSVFilesForm
 from django.utils import timezone
-from utils.whatsapp import send_WA_create_update_delete, send_WA_general
+from utils.whatsapp_albinaa import send_WA_create_update_delete, send_WA_general
 from userlog.models import UserLog
 from pandas import read_excel, read_csv
 from xlsxwriter import Workbook
