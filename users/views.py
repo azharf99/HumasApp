@@ -16,7 +16,7 @@ from django.contrib import messages
 from django.template.response import TemplateResponse
 from users.models import Teacher
 from users.forms import ProfileUpdateForm, UserCreateForm, UserUpdateForm, UserPasswordUpdateForm
-from utils.whatsapp_albinaa import send_WA_login_logout, send_WA_create_update_delete
+from utils.whatsapp_albinaa import send_WA_general, send_WA_create_update_delete
 from typing import Any
 
 # Create your views here.
@@ -43,7 +43,7 @@ class MyLoginView(LoginView):
                 app="USERS",
                 message="berhasil melakukan login ke aplikasi"
             )
-        send_WA_login_logout(form.get_user().teacher.no_hp, 'login', 'Selamat datang di Aplikasi Humas & PT')
+        send_WA_general(form.get_user().teacher.no_hp, 'login', 'Selamat datang di Aplikasi Humas & PT')
         messages.success(self.request, "Login Berhasil! :)")
         return super().form_valid(form)
 
@@ -101,7 +101,7 @@ class MyLogoutView(LogoutView):
             app="USERS",
             message="berhasil logout dari aplikasi",
         )
-        send_WA_login_logout(request.user.teacher.no_hp, 'logout', 'Selamat jalan!')
+        send_WA_general(request.user.teacher.no_hp, 'logout', 'Selamat jalan!')
         messages.success(self.request, "Selamat Jalan, Logout Berhasil! :)")
         cache.clear()
         return super().post(request, *args, **kwargs)

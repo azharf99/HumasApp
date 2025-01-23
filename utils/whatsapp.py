@@ -19,7 +19,7 @@ _Ini adalah pesan otomatis, jangan dibalas._'''
         return None
 
 
-def send_WA_login_logout(phone="085701570100", action="", messages=""):
+def send_WA_general(phone="085701570100", action="", messages=""):
     message = f'''*[NOTIFIKASI HUMAS SMAS IT AL BINAA]*
 Anda berhasil {action}. {messages}. 
 Jika ada yang ditanyakan terkait aplikasi, silahkan hubungi:
