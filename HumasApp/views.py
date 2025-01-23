@@ -38,6 +38,7 @@ class DashboardView(ListView):
         c["jumlah_alumni_putri_universitas"] = self.queryset.filter(gender="P").exclude(undergraduate_university__exact="")
         c["jumlah_alumni_putri_non_univ"] = self.queryset.filter(gender="P", undergraduate_university="")
         c["logs"] = UserLog.objects.order_by("-created_at")[:10]
-        c["sebaran_universitas_sarjana"] = self.queryset.values('undergraduate_university').annotate(dcount=Count('undergraduate_university')).order_by()
+        c["sebaran_universitas_sarjana"] = self.queryset.exclude(undergraduate_university__in=[0, '']).values('undergraduate_university')\
+                                                        .annotate(dcount=Count('undergraduate_university')).order_by('-dcount')[:20]
 
         return c

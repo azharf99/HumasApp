@@ -33,7 +33,7 @@ class AlumniDashboardView(ListView):
         c["jumlah_alumni_putri_universitas"] = self.queryset.filter(Q(gender="P",) & Q(undergraduate_university__isnull=False)|Q(postgraduate_university__isnull=False)|Q(doctoral_university__isnull=False))
         c["logs"] = UserLog.objects.order_by("-created_at")[:10]
         c["sebaran_wilayah"] = Alumni.objects.values('city', 'province').annotate(dcount=Count('city'))
-        c["sebaran_universitas_sarjana"] = self.queryset.values('undergraduate_university').annotate(dcount=Count('undergraduate_university')).order_by()
+        c["sebaran_universitas_sarjana"] = self.queryset.exclude(undergraduate_university__in=[0, '']).values('undergraduate_university').annotate(dcount=Count('undergraduate_university')).order_by('-dcount')[:10]
         c["sebaran_universitas_magister"] = self.queryset.values('postgraduate_university').annotate(dcount=Count('postgraduate_university')).order_by()
         c["sebaran_universitas_doktoral"] = self.queryset.values('doctoral_university').annotate(dcount=Count('doctoral_university')).order_by()
         return c
