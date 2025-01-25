@@ -39,7 +39,7 @@ class Alumni(models.Model):
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     def __str__(self) -> str:
-        return f"{self.name} | Angkatan {self.group}"
+        return f"{self.name} | Angkatan {self.group or '-'}"
     
 
     def get_absolute_url(self):

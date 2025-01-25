@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="{% static 'css/build.css' %}">
 </head>
 
+
 <body class="bg-gray-100 dark:bg-black dark:text-gray-200">
   <main class="p-6 flex justify-center items-center h-screen">
     <section class="flex flex-col justify-center items-center bg-white dark:bg-gray-800 w-full md:w-1/2 rounded-lg shadow-lg">
@@ -28,30 +29,29 @@
 
           {% if messages %}
           {% for message in messages %}
-            {% if message.tags == "success" %}
-            <div class="flex items-center p-4 mb-4 mx-2 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" role="alert">
-              <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-              </svg>
-              <span class="sr-only">Info</span>
-              <div>
-                <span class="font-medium">Success!</span> {{message.message}}
-              </div>
+          {% if message.tags == "success" %}
+          <div class="flex items-center p-4 mb-4 mx-2 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" role="alert">
+            <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+            </svg>
+            <span class="sr-only">Info</span>
+            <div>
+              <span class="font-medium">Success!</span> {{message.message}}
             </div>
-            {% else %}
-            <div class="flex items-center p-4 mb-4 mx-2 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
-              <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-              </svg>
-              <span class="sr-only">Info</span>
-              <div>
-                <span class="font-medium">Error!</span> {{message.message}}
-              </div>
+          </div>
+          {% else %}
+          <div class="flex items-center p-4 mb-4 mx-2 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+            <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+            </svg>
+            <span class="sr-only">Info</span>
+            <div>
+              <span class="font-medium">Error!</span> {{message.message}}
             </div>
-            {% endif %}
+          </div>
+          {% endif %}
           {% endfor %}
           {% endif %}
-          
           
           <label for="AcceptConditions"
             class="relative inline-block h-6 w-12 mx-4 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500">
@@ -76,42 +76,21 @@
           
         <div>
           <a href="{% url 'app-index' %}" class="flex justify-center items-center py-4 gap-2">
-            <img src="{% static '/images/Binaaul-Mustaqbal.png' %}" alt="PMBP Logo" class="w-12">
-            <span class="text-2xl font-bold text-blue-500 dark:text-black"> Humas Login</span>
+            <img src="{% static '/images/Binaaul-Mustaqbal.png' %}" alt="PIKET Logo" class="w-12">
+            <span class="text-xl font-semibold text-blue-500 dark:text-black">{{site_title}}</span>
           </a>
         </div>
 
-        <form class="flex flex-col gap-4" method="post" action="">
-          {% csrf_token %}
-
-          <div class="flex flex-col">
-            <label for="yourUsername">Username</label>
-            <input type="text" autocomplete="off" name="username" class="rounded-md text-black py-1 px-2 border-2 border-blue-500" id="yourUsername" placeholder="Username" required>
-          </div>
-
-          <div class="flex flex-col">
-            <label for="yourPassword">Password</label>
-            <input type="password" autocomplete="off" name="password" class="rounded-md text-black py-1 px-2 border-2 border-blue-500" id="yourPassword" placeholder="Password" required>
-          </div>
-
-          <div class="flex gap-2 items-center">
-            <input class="form-check-input" type="checkbox" name="remember" value="true" id="rememberMe" checked>
-            <label class="form-check-label" for="rememberMe">Remember me</label>
-          </div>
-
-          <div class="text-center flex flex-col gap-4 justify-center">
-            <button class="py-2 px-2 bg-blue-500 text-white rounded-md" type="submit">Login</button>
-            <p id="forgotPassword">Lupa password? <a href="{% url 'password_reset' %}" id="back" class="py-1 px-2 bg-yellow-600 text-white rounded-md">Reset aja!</a></p>
-            <a href="{% url 'app-index' %}" class="py-1 px-2 bg-red-500 text-white rounded-md">&leftarrow; Home</a>
-          </div>
-        </form>
-
+        {% block content %}
+        {% endblock content %}
+    
+    
+            
       </div>
     </section>
-  </main>
-  <!-- End #main -->
-  
-  <script src="{% static 'js/login.js' %}"></script>
+    </main>
+
+    <script src="{% static 'js/login.js' %}"></script>
 
 </body>
 

@@ -1,6 +1,6 @@
 from django import forms
 from users.models import Teacher
-from django.contrib.auth.forms import BaseUserCreationForm, UserChangeForm, PasswordChangeForm
+from django.contrib.auth.forms import BaseUserCreationForm, UserChangeForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model, password_validation
 
@@ -88,3 +88,20 @@ class UserPasswordUpdateForm(PasswordChangeForm):
     class Meta:
         model = get_user_model()
         fields = ["old_password", "new_password1", "new_password2"]
+
+
+class UserPasswordResetForm(PasswordResetForm):
+    email = forms.CharField(
+        label=_("Email Terdaftar"),
+        widget=forms.EmailInput(
+            attrs={"autocomplete": "email", "autofocus": True,
+                   "class": "rounded-md text-black px-2 py-1 border-2 border-blue-500 dark:border-none shadow-lg"}
+        ),
+    )
+
+
+class UserSetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({'class': "rounded-md text-black px-2 py-1 border-2 border-blue-500 dark:border-none shadow-lg"})

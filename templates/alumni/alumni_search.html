@@ -46,9 +46,9 @@
 
     {% endif %}
 
-    {% if query and request.user.is_superuser %}
+    {% if object_list and query and request.user.is_superuser %}
     <div class="flex justify-center">
-      <a href="{% url 'alumni:alumni-filter-download' query %}" class="p-2 mt-4 text-sm rounded-md bg-green-500">&DownArrowBar; Download Data</a>
+      <a href="{% url 'alumni:alumni-download' %}?query={{query}}" class="p-2 mt-4 text-sm rounded-md bg-green-500">&DownArrowBar; Download Data</a>
     </div>
     {% endif %}
     

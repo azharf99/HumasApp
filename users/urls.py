@@ -2,6 +2,8 @@ from django.urls import path
 from users.views import TeacherCreateView, TeacherUpdateView, TeacherDeleteView, TeacherListView, TeacherDetailView, MyLoginView,\
                         MyLogoutView, MyProfileView, MyProfileUpdateView, UserCreateView, UserListView, UserUpdateView, UserDeleteView,\
                         UserDetailView, UserPasswordChangeView, UserPasswordChangeDoneView
+from users.forms import UserPasswordResetForm, UserSetPasswordForm
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', UserListView.as_view(), name="user-list"),
@@ -20,4 +22,13 @@ urlpatterns = [
     path('teacher/<int:pk>/', TeacherDetailView.as_view(), name='teacher-detail'),
     path('teacher/update/<int:pk>/', TeacherUpdateView.as_view(), name='teacher-update'),
     path('teacher/delete/<int:pk>/', TeacherDeleteView.as_view(), name='teacher-delete'),
+    path('password_reset/', auth_views.PasswordResetView.as_view(
+        html_email_template_name='registration/password_reset_email.html',
+        form_class = UserPasswordResetForm
+    ), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+        form_class = UserSetPasswordForm
+    ), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 ]

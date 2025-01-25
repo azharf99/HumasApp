@@ -10,6 +10,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from xlsxwriter import Workbook
 from pandas import read_csv, read_excel
+from utils.mixins import GeneralAuthPermissionMixin, GeneralContextMixin, GeneralFormDeleteMixin, GeneralFormValidateMixin
 from alumni.forms import CSVFilesForm, FilesForm
 from alumni.models import CSVFiles, Files
 from private.models import Private
@@ -22,138 +23,59 @@ from utils.whatsapp_albinaa import send_WA_create_update_delete
 from numpy import int8
 
 # Class Controllers
-class ClassIndexView(ListView):
+class ClassIndexView(GeneralContextMixin, ListView):
     model = Class
 
-class ClassCreateView(LoginRequiredMixin, CreateView):
+class ClassCreateView(GeneralFormValidateMixin, CreateView):
     model = Class
     form_class = ClassUpdateForm
+    form_name = "Create"
+    app_name = "Class"
+    type_url = 'students/'
+    slug_url = 'class/'
+    permission_required = 'students.add_class'
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.success(self.request, "Input Data Gagal! :( Ada kesalahan input!")
-        return super().form_invalid(form)
-
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.obj = form.save(commit=False)
-        UserLog.objects.create(
-                user=self.request.user.teacher,
-                action_flag="CREATE",
-                app="CLASS",
-                message=f"berhasil menambahkan data kelas {self.obj}"
-            )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data kelas {self.obj}', 'students/', 'class/')
-        messages.success(self.request, "Input Data Berhasil! :)")
-        return super().form_valid(form)
-    
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Create"
-        return c
-
-class ClassDetailView(LoginRequiredMixin, DetailView):
+class ClassDetailView(GeneralAuthPermissionMixin, DetailView):
     model = Class
+    permission_required = 'students.view_class'
 
 class ClassUpdateView(LoginRequiredMixin, UpdateView):
     model = Class
     form_class = ClassUpdateForm
+    form_name = "Update"
+    app_name = "Class"
+    type_url = 'students/'
+    slug_url = 'class/'
+    permission_required = 'students.change_class'
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.success(self.request, "Update Data Gagal! :( Ada kesalahan input!")
-        return super().form_invalid(form)
-
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.obj = form.save(commit=False)
-        UserLog.objects.create(
-                user=self.request.user.teacher,
-                action_flag="UPDATE",
-                app="CLASS",
-                message=f"berhasil update data kelas {self.obj}"
-            )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data kelas {self.obj}', 'students/', 'class/')
-        messages.success(self.request, "Update Data Berhasil! :)")
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Update"
-        return c
-
-class ClassDeleteView(LoginRequiredMixin, DeleteView):
+class ClassDeleteView(GeneralFormDeleteMixin):
     model = Class
     success_url = reverse_lazy("student:class-index")
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-
-    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        self.obj = self.get_object()
-        UserLog.objects.create(
-                user=self.request.user.teacher,
-                action_flag="DELETE",
-                app="CLASS",
-                message=f"berhasil menghapus data kelas {self.obj}"
-            )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data kelas {self.obj}', 'students/', 'class/')
-        messages.success(self.request, "Data Berhasil Dihapus! :)")
-        return super().post(request, *args, **kwargs)
+    app_name = "Class"
+    type_url = 'students/'
+    slug_url = 'class/'
+    permission_required = 'students.delete_class'
 
 
 # Student Controllers
-class StudentIndexView(ListView):
+class StudentIndexView(GeneralContextMixin, ListView):
     model = Student
 
-class StudentCreateView(LoginRequiredMixin, CreateView):
+class StudentCreateView(GeneralFormValidateMixin, CreateView):
     model = Student
     form_class = StudentUpdateForm
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.success(self.request, "Input Data Gagal! :( Ada kesalahan input!")
-        return super().form_invalid(form)
-
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.obj = form.save(commit=False)
-        UserLog.objects.create(
-                user=self.request.user.teacher,
-                action_flag="CREATE",
-                app="STUDENT",
-                message=f"berhasil menambahkan data santri {self.obj}"
-            )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data santri {self.obj}', 'students/')
-        messages.success(self.request, "Input Data Berhasil! :)")
-        return super().form_valid(form)
-    
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Create"
-        return c
+    form_name = "Create"
+    app_name = "Student"
+    type_url = 'students/'
+    permission_required = 'students.add_student'
     
 
-class StudentQuickUploadView(LoginRequiredMixin, CreateView):
+class StudentQuickUploadView(GeneralAuthPermissionMixin, CreateView):
     model = Files
     form_class = FilesForm
     template_name = 'students/student_form.html'
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
+    permission_required = 'students.add_student'
+    form_name = "Import Excel"
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save()
@@ -190,21 +112,13 @@ class StudentQuickUploadView(LoginRequiredMixin, CreateView):
         messages.success(self.request, "Import Data Excel Berhasil! :)")
         return HttpResponseRedirect(self.get_success_url())
     
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Import Excel"
-        return c
-    
 
-class StudentQuickCSVUploadView(LoginRequiredMixin, CreateView):
+class StudentQuickCSVUploadView(GeneralAuthPermissionMixin, CreateView):
     model = CSVFiles
     form_class = CSVFilesForm
     template_name = 'students/student_form.html'
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
+    permission_required = 'students.add_student'
+    form_name = "Import Excel"
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save()
@@ -241,66 +155,24 @@ class StudentQuickCSVUploadView(LoginRequiredMixin, CreateView):
         messages.success(self.request, "Import Data CSV Berhasil! :)")
         return HttpResponseRedirect(self.get_success_url())
     
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Import Excel"
-        return c
-    
 
-class StudentDetailView(LoginRequiredMixin, DetailView):
+class StudentDetailView(GeneralAuthPermissionMixin, DetailView):
     model = Student
-
+    permission_required = 'students.view_student'
 
 class StudentUpdateView(LoginRequiredMixin, UpdateView):
     model = Student
     form_class = StudentUpdateForm
+    form_name = "Update"
+    app_name = "Student"
+    type_url = 'students/'
+    permission_required = 'students.change_student'
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.success(self.request, "Update Data Gagal! :( Ada kesalahan input!")
-        return super().form_invalid(form)
-
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.obj = form.save(commit=False)
-        UserLog.objects.create(
-                user=self.request.user.teacher,
-                action_flag="UPDATE",
-                app="STUDENT",
-                message=f"berhasil update data santri {self.obj}"
-            )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data santri {self.obj}', 'students/')
-        messages.success(self.request, "Update Data Berhasil! :)")
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Update"
-        return c
-
-class StudentDeleteView(LoginRequiredMixin, DeleteView):
+class StudentDeleteView(GeneralFormDeleteMixin):
     model = Student
     success_url = reverse_lazy("student:student-index")
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-    
-    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        self.obj = self.get_object()
-        UserLog.objects.create(
-                user=self.request.user.teacher,
-                action_flag="DELETE",
-                app="STUDENT",
-                message=f"berhasil menghapus data santri {self.obj}"
-            )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data santri {self.obj}', 'students/')
-        messages.success(self.request, "Data Berhasil Dihapus! :)")
-        return super().post(request, *args, **kwargs)
+    app_name = "Student"
+    type_url = 'students/'
     
 
 class StudentPrivateView(ListView):

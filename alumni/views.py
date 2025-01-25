@@ -1,20 +1,17 @@
-from io import BytesIO
 from typing import Any
-from django.core.exceptions import PermissionDenied
 from django.forms import BaseModelForm
-from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseRedirect
-from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count
 from django.urls import reverse, reverse_lazy
+from utils.mixins import GeneralAuthPermissionMixin, GeneralContextMixin, GeneralDownloadExcelView, GeneralFormDeleteMixin, GeneralFormValidateMixin
 from alumni.models import Alumni, Files, CSVFiles
 from alumni.forms import AlumniForm, FilesForm, CSVFilesForm
 from django.utils import timezone
-from utils.whatsapp_albinaa import send_WA_create_update_delete, send_WA_general
+from utils.whatsapp_albinaa import send_WA_create_update_delete
 from userlog.models import UserLog
 from pandas import read_excel, read_csv
-from xlsxwriter import Workbook
 
 class AlumniDashboardView(ListView):
     model = Alumni
@@ -39,13 +36,13 @@ class AlumniDashboardView(ListView):
         return c
 
 
-class AlumniIndexView(ListView):
+class AlumniIndexView(GeneralContextMixin, ListView):
     model = Alumni
     paginate_by = 50
 
 
 
-class AlumniSearchView(ListView):
+class AlumniSearchView(GeneralContextMixin, ListView):
     model = Alumni
     template_name = 'alumni/alumni_search.html'
 
@@ -70,51 +67,21 @@ class AlumniSearchView(ListView):
         context = self.get_context_data()
         return self.render_to_response(context)
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["query"] = self.request.GET.get("query")
-        return c
 
-
-class AlumniCreateView(LoginRequiredMixin, CreateView):
+class AlumniCreateView(GeneralFormValidateMixin, CreateView):
     model = Alumni
     form_class = AlumniForm
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
+    form_name = "Create"
+    app_name = "Alumni"
+    type_url = 'alumni/'
+    permission_required = 'alumni.add_alumni'
     
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.success(self.request, "Input Data Gagal! :( Ada kesalahan input!")
-        return super().form_invalid(form)
 
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.object = form.save(commit=False)
-        UserLog.objects.create(
-            user = self.request.user.teacher,
-            action_flag = "CREATE",
-            app = "ALUMNI",
-            message = f"berhasil menambahkan data alumni atas nama {self.object.name} angkatan {self.object.group}"
-        )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data alumni {self.object.name} angkatan {self.object.group}', 'alumni/')
-        messages.success(self.request, "Update Data Berhasil! :)")
-        return super().form_valid(form)
-    
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Create"
-        c["query"] = self.request.GET.get("query")
-        return c
-
-class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
+class AlumniQuickUploadView(GeneralAuthPermissionMixin, CreateView):
     model = Files
     form_class = FilesForm
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
+    permission_required = 'alumni.add_alumni'
+    form_name = "Import Excel Alumni"
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save(commit=False)
@@ -170,21 +137,14 @@ class AlumniQuickUploadView(LoginRequiredMixin, CreateView):
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengimpor dari excel', 'data alumni', 'alumni/')
         return HttpResponseRedirect(self.get_success_url())
     
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Import Excel Alumni"
-        return c
-    
 
-class AlumniCSVQuickUploadView(LoginRequiredMixin, CreateView):
+class AlumniCSVQuickUploadView(GeneralAuthPermissionMixin, CreateView):
     model = CSVFiles
     form_class = CSVFilesForm
     template_name = 'alumni/files_form.html'
+    permission_required = 'alumni.add_alumni'
+    form_name = "Import CSV Alumni"
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         self.object = form.save(commit=False)
@@ -242,126 +202,35 @@ class AlumniCSVQuickUploadView(LoginRequiredMixin, CreateView):
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengimpor dari csv', 'data alumni', 'alumni/')
         return HttpResponseRedirect(self.get_success_url())
     
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Import CSV Alumni"
-        return c
     
-    
-class AlumniDetailView(LoginRequiredMixin, DetailView):
+class AlumniDetailView(GeneralAuthPermissionMixin, DetailView):
     model = Alumni
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
+    permission_required = 'alumni.view_alumni'
 
 
-class AlumniUpdateView(LoginRequiredMixin, UpdateView):
+class AlumniUpdateView(GeneralFormValidateMixin, UpdateView):
     model = Alumni
     form_class = AlumniForm
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-    
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.success(self.request, "Update Data Gagal! :( Ada kesalahan input!")
-        return super().form_invalid(form)
-    
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.object = form.save(commit=False)
-        UserLog.objects.create(
-            user = self.request.user.teacher,
-            action_flag = "UPDATE",
-            app = "ALUMNI",
-            message = f"berhasil update data alumni atas nama {self.object.name} angkatan {self.object.group}"
-        )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data alumni {self.object.name} angkatan {self.object.group}', 'alumni/')
-        messages.success(self.request, "Update Data Berhasil! :)")
-        return super().form_valid(form)
-    
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Update"
-        return c
+    app_name = "Alumni"
+    form_name = "Update"
+    type_url = 'alumni/'
+    permission_required = 'alumni.change_alumni'
 
 
-class AlumniDeleteView(LoginRequiredMixin, DeleteView):
+class AlumniDeleteView(GeneralFormDeleteMixin):
     model = Alumni
     success_url = reverse_lazy("alumni:alumni-index")
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-    
-    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        self.obj = self.get_object()
-        UserLog.objects.create(
-            user = self.request.user.teacher,
-            action_flag = "DELETE",
-            app = "ALUMNI",
-            message = f"berhasil menghapus data alumni atas nama {self.obj.name} angkatan {self.obj.group}"
-        )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data alumni {self.obj.name} angkatan {self.obj.group}', 'alumni/')
-        messages.success(self.request, "Data Berhasil Dihapus! :)")
-        return super().post(request, *args, **kwargs)
+    app_name = 'Alumni'
+    type_url = 'alumni/'
+    permission_required = 'alumni.delete_alumni'
     
 
 
-class AlumniDownloadExcelView(LoginRequiredMixin, ListView):
-    model = Alumni
+class AlumniDownloadExcelView(GeneralDownloadExcelView):
+    app_name = 'Alumni'
+    permission_required = 'alumni.view_alumni'
+    template_name = 'alumni/download.html'
+    header_names = ['No', 'NIS', 'NISN', 'Nama', 'Angkatan', 'Tahun Lulus']
+    filename = 'Daftar Alumni SMA IT Al Binaa.xlsx'
+    queryset = Alumni.objects.all()
     
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        buffer = BytesIO()
-        workbook = Workbook(buffer)
-        worksheet = workbook.add_worksheet()
-        worksheet.write_row(0, 0, ['No', 'NIS', 'NISN', 'Nama', 'Angkatan', 'Tahun Lulus'])
-        row = 1
-        for data in self.get_queryset():
-            worksheet.write_row(row, 0, [row, f"{data.nis}", f"{data.nisn}", data.name, data.group, data.graduate_year])
-            row += 1
-        worksheet.autofit()
-        workbook.close()
-        buffer.seek(0)
-
-        UserLog.objects.create(
-            user=request.user.teacher,
-            action_flag="DOWNLOAD",
-            app="ALUMNI",
-            message="berhasil download daftar alumni dalam format Excel"
-        )
-        send_WA_general(request.user.teacher.no_hp, 'download', 'file Excel data alumni')
-        return FileResponse(buffer, as_attachment=True, filename='Daftar Alumni SMA IT Al Binaa.xlsx')
-    
-    
-class AlumniFilterDownloadExcelView(LoginRequiredMixin, ListView):
-    model = Alumni
-    
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if not request.user.is_superuser:
-            raise PermissionDenied
-        query = self.kwargs.get("query")
-        queryset = self.get_queryset().filter(Q(nis__icontains=query)|Q(name__icontains=query)|Q(nisn__icontains=query)|Q(group__icontains=query)|Q(graduate_year__icontains=query))
-        buffer = BytesIO()
-        workbook = Workbook(buffer)
-        worksheet = workbook.add_worksheet()
-        worksheet.write_row(0, 0, ['No', 'NIS', 'NISN', 'Nama', 'Angkatan', 'Tahun Lulus'])
-        row = 1
-        for data in queryset:
-            worksheet.write_row(row, 0, [row, f"{data.nis}", f"{data.nisn}", data.name, data.group, data.graduate_year])
-            row += 1
-        worksheet.autofit()
-        workbook.close()
-        buffer.seek(0)
-
-        UserLog.objects.create(
-            user=request.user.teacher,
-            action_flag="DOWNLOAD",
-            app="ALUMNI",
-            message="berhasil download list search alumni dalam format Excel"
-        )
-        send_WA_general(request.user.teacher.no_hp, 'download', 'file search Excel data alumni')
-        return FileResponse(buffer, as_attachment=True, filename='List Search Alumni SMA IT Al Binaa.xlsx')

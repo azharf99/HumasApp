@@ -6,6 +6,7 @@ from django.forms.models import BaseModelForm
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse, reverse_lazy
 from pandas import read_excel
+from utils.mixins import GeneralAuthPermissionMixin, GeneralContextMixin, GeneralFormDeleteMixin, GeneralFormValidateMixin
 from alumni.forms import FilesForm
 from alumni.models import Files
 from private.models import Private, Subject, Group
@@ -21,7 +22,7 @@ from django.db.models import Count
 
 
 # Private Controllers
-class PrivateIndexView(ListView):
+class PrivateIndexView(GeneralContextMixin, ListView):
     model = Private
     paginate_by = 51
 
@@ -32,52 +33,36 @@ class PrivateIndexView(ListView):
             return Private.objects.prefetch_related("kehadiran_santri", "kelompok__santri", "pembimbing", "pelajaran__pembimbing", "kelompok__pelajaran")\
                                 .filter(tanggal_bimbingan__month=month, tanggal_bimbingan__year=year)
         return super().get_queryset().prefetch_related("kehadiran_santri", "kelompok__santri", "pembimbing", "pelajaran", "kelompok__pelajaran")
-    
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["month"] = self.request.GET.get("month")
-        c["year"] = self.request.GET.get("year")
-        return c
 
-class PrivateCreateView(LoginRequiredMixin, CreateView):
+
+class PrivateCreateView(GeneralFormValidateMixin, CreateView):
     model = Private
     form_class = PrivateCreateForm
+    success_message = "Input laporan privat berhasil!"
+    form_name = "Create"
+    app_name = "Private"
+    type_url = 'private/'
+    permission_required = 'private.add_private'
 
     def get_form_kwargs(self) -> dict[str, Any]:
         k = super().get_form_kwargs()
         k["user"] = self.request.user
         k["subject"] = Subject.objects.prefetch_related("pembimbing").all()
         return k
-    
 
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.object = form.save()
-        UserLog.objects.create(
-            user=self.request.user.teacher,
-            action_flag="CREATE",
-            app="PRIVATE",
-            message=f"berhasil menambahkan data privat {self.object}",
-        )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, f'{self.request.user.teacher} menambahkan', f'data privat {self.object}', 'private/')
-        messages.success(self.request, "Input Laporan Berhasil!")
-        return HttpResponseRedirect(self.get_success_url())
-    
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.error(self.request, "Input Laporan Gagal! Ada yang salah salam pengisian. Mohon dicek ulang atau hubungi Administrator.")
-        return super().form_invalid(form)
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Create"
-        return c
-
-class PrivateDetailView(LoginRequiredMixin, DetailView):
+class PrivateDetailView(GeneralAuthPermissionMixin, DetailView):
     model = Private
+    permission_required = 'private.view_private'
 
 
-class PrivateUpdateView(LoginRequiredMixin, UpdateView):
+class PrivateUpdateView(GeneralFormValidateMixin, UpdateView):
     model = Private
     form_class = PrivateUpdateForm
+    success_message = "Update laporan privat berhasil!"
+    form_name = "Update"
+    app_name = "Private"
+    type_url = 'private/'
+    permission_required = 'private.delete_private'
 
     def get_form_kwargs(self) -> dict[str, Any]:
         k = super().get_form_kwargs()
@@ -90,177 +75,73 @@ class PrivateUpdateView(LoginRequiredMixin, UpdateView):
             return super().get(request, *args, **kwargs)
         raise PermissionDenied
 
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.object = form.save()
-        UserLog.objects.create(
-            user=self.request.user.teacher,
-            action_flag="UPDATE",
-            app="PRIVATE",
-            message=f"berhasil mengubah data privat {self.object}",
-        )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengubah', f'data privat {self.object}', 'private/')
-        messages.success(self.request, "Update Laporan Berhasil!")
-        return HttpResponseRedirect(reverse("private:private-detail", kwargs={"pk": self.kwargs.get("pk")}))
-    
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.error(self.request, "Update Laporan Gagal! Ada yang salah salam pengisian. Mohon dicek ulang atau hubungi Administrator.")
-        return super().form_invalid(form)
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Update"
-        return c
-
-class PrivateDeleteView(LoginRequiredMixin, DeleteView):
+class PrivateDeleteView(GeneralFormDeleteMixin):
     model = Private
     success_url = reverse_lazy("private:private-index")
+    app_name = 'Private'
+    type_url = 'private/'
+    permission_required = 'private.delete_private'
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if self.get_object().pembimbing == request.user.teacher or request.user.is_superuser:
             return super().get(request, *args, **kwargs)
         raise PermissionDenied
-    
-    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        self.obj = self.get_object()
-        UserLog.objects.create(
-            user=self.request.user.teacher,
-            action_flag="DELETE",
-            app="PRIVATE",
-            message=f"berhasil menghapus data privat {self.obj}",
-        )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data privat {self.obj}', 'private/')
-        messages.success(self.request, "Data Berhasil Dihapus! :)")
-        return super().post(request, *args, **kwargs)
 
 
 # Subject Controllers
-class SubjectIndexView(ListView):
+class SubjectIndexView(GeneralContextMixin ,ListView):
     model = Subject
 
-class SubjectCreateView(LoginRequiredMixin, CreateView):
-    model = Subject
-    form_class = SubjectForm
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.obj = form.save(commit=False)
-        UserLog.objects.create(
-            user=self.request.user.teacher,
-            action_flag="CREATE",
-            app="SUBJECT",
-            message=f"berhasil menambahkan data mapel {self.obj}",
-        )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data mapel {self.obj}', 'private/', 'subjects/')
-        messages.success(self.request, "Input Mapel Berhasil!")
-        return super().form_valid(form)
-    
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.error(self.request, "Input Mapel Gagal!")
-        return super().form_invalid(form)
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Create"
-        return c
-
-class SubjectDetailView(LoginRequiredMixin, DetailView):
-    model = Subject
-
-class SubjectUpdateView(LoginRequiredMixin, UpdateView):
+class SubjectCreateView(GeneralAuthPermissionMixin, CreateView):
     model = Subject
     form_class = SubjectForm
+    form_name = "Create"
+    app_name = "Subject"
+    type_url = 'private/'
+    slug_url = 'subjects/'
+    permission_required = 'subject.add_subject'
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
+class SubjectDetailView(GeneralAuthPermissionMixin, DetailView):
+    model = Subject
+    permission_required = 'subject.view_subject'
+
+class SubjectUpdateView(GeneralFormValidateMixin, UpdateView):
+    model = Subject
+    form_class = SubjectForm
+    form_name = "Update"
+    app_name = "Subject"
+    type_url = 'private/'
+    slug_url = 'subjects/'
+    permission_required = 'subject.change_subject'
     
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.obj = form.save(commit=False)
-        UserLog.objects.create(
-            user=self.request.user.teacher,
-            action_flag="UPDATE",
-            app="SUBJECT",
-            message=f"berhasil update data mapel {self.obj}",
-        )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data mapel {self.obj}', 'private/', 'subjects/')
-        messages.success(self.request, "Update Mapel Berhasil!")
-        return super().form_valid(form)
-    
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.error(self.request, "Update Mapel Gagal!")
-        return super().form_invalid(form)
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Update"
-        return c
-
-class SubjectDeleteView(LoginRequiredMixin, DeleteView):
+class SubjectDeleteView(GeneralFormDeleteMixin):
     model = Subject
     success_url = reverse_lazy("private:subject-index")
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-    
-    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        self.obj = self.get_object()
-        UserLog.objects.create(
-            user=self.request.user.teacher,
-            action_flag="DELETE",
-            app="SUBJECT",
-            message=f"berhasil menghapus data mapel {self.obj}",
-        )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data mapel {self.obj}', 'private/', 'subjects/')
-        messages.success(self.request, "Data Berhasil Dihapus! :)")
-        return super().post(request, *args, **kwargs)
-    
-
+    app_name = "Subject"
+    type_url = 'private/'
+    slug_url = 'subjects/'
+    permission_required = 'subject.delete_subject'
 
 # Group Controllers
-class GroupIndexView(ListView):
+class GroupIndexView(GeneralContextMixin ,ListView):
     model = Group
 
-class GroupCreateView(LoginRequiredMixin, CreateView):
+class GroupCreateView(GeneralAuthPermissionMixin, CreateView):
     model = Group
     form_class = GroupForm
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.object = form.save()
-        UserLog.objects.create(
-            user=self.request.user.teacher,
-            action_flag="CREATE",
-            app="GROUP",
-            message=f"berhasil menambahkan data kelompok privat {self.object}",
-        )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data kelompok privat {self.object}', 'private/')
-        messages.success(self.request, "Input Laporan Berhasil!")
-        return HttpResponseRedirect(self.get_success_url())
-    
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.error(self.request, "Input Laporan Gagal! Ada yang salah salam pengisian. Mohon dicek ulang atau hubungi Administrator.")
-        return super().form_invalid(form)
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Create"
-        return c
+    form_name = "Create"
+    app_name = "Group"
+    type_url = 'private/'
+    slug_url = 'groups/'
+    permission_required = 'group.add_group'
 
 
-class GroupQuickUploadView(LoginRequiredMixin, CreateView):
+class GroupQuickUploadView(GeneralAuthPermissionMixin, CreateView):
     model = Files
     form_class = FilesForm
+    form_name = "Import Excel Kelompok Privat"
+    permission_required = 'alumni.add_files'
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if request.user.is_superuser:
@@ -296,62 +177,30 @@ class GroupQuickUploadView(LoginRequiredMixin, CreateView):
         messages.success(self.request, "Selamat, Impor data excel kelompok privat berhasil!")
         send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengimpor dari excel', 'data kelompok privat', 'private/', 'groups/')
         return HttpResponseRedirect(self.get_success_url())
-    
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Import Excel Kelompok Privat"
-        return c
 
 
 
-class GroupDetailView(LoginRequiredMixin, DetailView):
+class GroupDetailView(GeneralAuthPermissionMixin, DetailView):
     model = Group
+    permission_required = 'group.view_group'
 
 class GroupUpdateView(LoginRequiredMixin, UpdateView):
     model = Group
     form_class = GroupForm
+    form_name = "Update"
+    app_name = "Group"
+    type_url = 'private/'
+    slug_url = 'groups/'
+    permission_required = 'group.change_group'
 
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.object = form.save()
-        UserLog.objects.create(
-            user=self.request.user.teacher,
-            action_flag="UPDATE",
-            app="GROUP",
-            message=f"berhasil mengubah data kelompok privat {self.object}",
-        )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'mengubah', f'data kelompok privat {self.object}', 'private/')
-        messages.success(self.request, "Update Laporan Berhasil!")
-        return HttpResponseRedirect(reverse("private:group-detail", kwargs={"pk": self.kwargs.get("pk")}))
-    
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.error(self.request, "Update Laporan Gagal! Ada yang salah salam pengisian. Mohon dicek ulang atau hubungi Administrator.")
-        return super().form_invalid(form)
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Update"
-        return c
-
-class GroupDeleteView(LoginRequiredMixin, DeleteView):
+class GroupDeleteView(GeneralFormDeleteMixin):
     model = Group
+    app_name = "Group"
+    type_url = 'private/'
+    slug_url = 'groups/'
+    permission_required = 'group.delete_group'
     success_url = reverse_lazy("private:group-index")
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-    
-    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        self.obj = self.get_object()
-        UserLog.objects.create(
-            user=self.request.user.teacher,
-            action_flag="DELETE",
-            app="GROUP",
-            message=f"berhasil menghapus data kelompok privat {self.obj}",
-        )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data kelompok privat {self.obj}', 'private/')
-        messages.success(self.request, "Data Berhasil Dihapus! :)")
-        return super().post(request, *args, **kwargs)
 
 
 class GroupGetView(LoginRequiredMixin, DetailView):
@@ -406,9 +255,6 @@ class PrivateOptionsView(ListView):
             monthList.append({"nama": month_names.get(i), "value": i})
         allDict["month"] = monthList
         allDict["year"] = list(yearSet)
-        
-        print(allDict)
-        
         return [allDict]
 
 

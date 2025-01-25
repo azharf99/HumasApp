@@ -5,6 +5,7 @@ from django.forms import BaseModelForm
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from pandas import read_csv, read_excel
+from utils.mixins import GeneralAuthPermissionMixin, GeneralContextMixin, GeneralFormDeleteMixin, GeneralFormValidateMixin
 from alumni.forms import CSVFilesForm, FilesForm
 from alumni.models import CSVFiles, Files
 from students.models import Student
@@ -18,43 +19,21 @@ from numpy import int8
 
 
 # Tahfidz Controllers
-class TahfidzIndexView(ListView):
+class TahfidzIndexView(GeneralContextMixin, ListView):
     model = Tahfidz
 
-class TahfidzCreateView(LoginRequiredMixin, CreateView):
+class TahfidzCreateView(GeneralFormValidateMixin, CreateView):
     model = Tahfidz
     form_class = TahfidzForm
+    form_name = "Create"
+    app_name = "Tahfidz"
+    type_url = 'tahfidz/'
+    permission_required = 'tahfidz.add_tahfidz'
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.error(self.request, "Input Data Gagal! :( Ada kesalahan input!")
-        return super().form_invalid(form)
-
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.object = form.save()
-        UserLog.objects.create(
-                user=self.request.user.teacher,
-                action_flag="CREATE",
-                app="TAHFIDZ",
-                message=f"berhasil menambahkan data tahfidz santri {self.object}"
-            )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menambahkan', f'data tahfidz santri {self.object}', 'tahfidz/')
-        messages.success(self.request, "Input Data Berhasil! :)")
-        return HttpResponseRedirect(self.get_success_url())
-    
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Create"
-        return c
-    
-
-class TahfidzQuickUploadView(LoginRequiredMixin, CreateView):
+class TahfidzQuickUploadView(GeneralAuthPermissionMixin, CreateView):
     model = Files
     form_class = FilesForm
+    permission_required = 'tahfidz.add_tahfidz'
     template_name = 'tahfidz/tahfidz_form.html'
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
@@ -97,9 +76,10 @@ class TahfidzQuickUploadView(LoginRequiredMixin, CreateView):
         return c
     
 
-class TahfidzQuickCSVUploadView(LoginRequiredMixin, CreateView):
+class TahfidzQuickCSVUploadView(GeneralAuthPermissionMixin, CreateView):
     model = CSVFiles
     form_class = CSVFilesForm
+    permission_required = 'tahfidz.add_tahfidz'
     template_name = 'tahfidz/tahfidz_form.html'
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
@@ -142,56 +122,21 @@ class TahfidzQuickCSVUploadView(LoginRequiredMixin, CreateView):
         return c
     
 
-class TahfidzDetailView(LoginRequiredMixin, DetailView):
+class TahfidzDetailView(GeneralAuthPermissionMixin, DetailView):
     model = Tahfidz
+    permission_required = 'tahfidz.view_tahfidz'
 
-class TahfidzUpdateView(LoginRequiredMixin, UpdateView):
+class TahfidzUpdateView(GeneralFormValidateMixin, UpdateView):
     model = Tahfidz
     form_class = TahfidzForm
+    form_name = "Update"
+    app_name = "Tahfidz"
+    type_url = 'tahfidz/'
+    permission_required = 'tahfidz.change_tahfidz'
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        messages.error(self.request, "Update Data Gagal! :( Ada kesalahan input!")
-        return super().form_invalid(form)
-
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        self.object = form.save()
-        UserLog.objects.create(
-                user=self.request.user.teacher,
-                action_flag="UPDATE",
-                app="TAHFIDZ",
-                message=f"berhasil update data tahfidz santri {self.object}"
-            )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'update', f'data tahfidz santri {self.object}', 'tahfidz/')
-        messages.success(self.request, "Update Data Berhasil! :)")
-        return HttpResponseRedirect(self.get_success_url())
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        c = super().get_context_data(**kwargs)
-        c["form_name"] = "Update"
-        return c
-
-class TahfidzDeleteView(LoginRequiredMixin, DeleteView):
+class TahfidzDeleteView(GeneralFormDeleteMixin):
     model = Tahfidz
     success_url = reverse_lazy("tahfidz:tahfidz-index")
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if request.user.is_superuser:
-            return super().get(request, *args, **kwargs)
-        raise PermissionDenied
-    
-    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        self.obj = self.get_object()
-        UserLog.objects.create(
-                user=self.request.user.teacher,
-                action_flag="DELETE",
-                app="STUDENT",
-                message=f"berhasil menghapus data tahfidz santri {self.obj}"
-            )
-        send_WA_create_update_delete(self.request.user.teacher.no_hp, 'menghapus', f'data tahfidz santri {self.obj}', 'tahfidz/')
-        messages.success(self.request, "Data Berhasil Dihapus! :)")
-        return super().post(request, *args, **kwargs)
+    app_name = "Tahfidz"
+    type_url = 'tahfidz/'
+    permission_required = 'tahfidz.delete_tahfidz'

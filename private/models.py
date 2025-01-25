@@ -72,7 +72,7 @@ class Private(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.pelajaran} ({self.tanggal_bimbingan})"
+        return f"{self.pelajaran} ({self.tanggal_bimbingan.strftime('%d %B %Y')})"
     
 
     def get_absolute_url(self):
