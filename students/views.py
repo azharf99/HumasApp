@@ -1,3 +1,4 @@
+from datetime import datetime
 from io import BytesIO
 from typing import Any
 from django.conf import settings
@@ -178,6 +179,9 @@ class StudentDeleteView(GeneralFormDeleteMixin):
 class StudentPrivateView(ListView):
     model = Student
     template_name = "students/student_private_list.html"
+
+    def get_queryset(self) -> QuerySet[Any]:
+        return Student.objects.prefetch_related("kelas")
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         c = super().get_context_data(**kwargs)
