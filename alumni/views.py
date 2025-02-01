@@ -90,11 +90,11 @@ class AlumniQuickUploadView(GeneralAuthPermissionMixin, CreateView):
         try:
             for i in range(row):
                 Alumni.objects.update_or_create(
-                    name = df.iloc[i, 2],
-                    group = df.iloc[i, 3],
+                    nis = df.iloc[i, 0],
                     defaults=dict(
                         nis = df.iloc[i, 0],
                         nisn = df.iloc[i, 1],
+                        name = df.iloc[i, 2],
                         group = df.iloc[i, 3],
                         birth_place = df.iloc[i, 4],
                         birth_date = df.iloc[i, 5] or None,
@@ -154,8 +154,6 @@ class AlumniCSVQuickUploadView(GeneralAuthPermissionMixin, CreateView):
             for i in range(row):
                 Alumni.objects.update_or_create(
                     nis = df.iloc[i, 0],
-                    nisn = df.iloc[i, 1],
-                    name = df.iloc[i, 2],
                     defaults=dict(
                         nis = df.iloc[i, 0],
                         nisn = df.iloc[i, 1],
