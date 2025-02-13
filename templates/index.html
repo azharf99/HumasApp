@@ -24,10 +24,66 @@
   <link rel="icon" type="image/png" sizes="16x16" href="{% static 'icon/favicon-16x16.png' %}">
   <link rel="manifest" href="{% static 'icon/site.webmanifest' %}">
   <link rel="stylesheet" href="{% static 'css/build.css' %}">
+  <style>
+    .carousel {
+      position: relative;
+      max-width: 800px;
+      margin: auto;
+      overflow: hidden;
+      z-index: auto;
+    }
+
+    .carousel-inner {
+      display: flex;
+      transition: transform 0.5s ease;
+    }
+
+    .carousel-item {
+      min-width: 100%;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .carousel-item img {
+      width: 100%;
+      display: block;
+      z-index: 2;
+    }
+
+    .caption {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .carousel-control {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .carousel-control.prev {
+      left: 10px;
+    }
+
+    .carousel-control.next {
+      right: 10px;
+    }
+  </style>
 </head>
 
 <body class="bg-gray-100 dark:bg-black dark:text-gray-200">
-  <header class="bg-indigo-500 dark:bg-gradient-to-r dark:from-slate-900 dark:via-purple-800 dark:to-black w-full sticky top-0">
+  <header class="bg-indigo-500 dark:bg-gradient-to-r dark:from-slate-900 dark:via-purple-800 dark:to-black w-full sticky z-20 top-0">
     <nav class="backdrop-blur-sm mx-auto flex w-full items-center justify-between p-4 lg:px-8" aria-label="Global">
       <div class="flex lg:flex-1">
         <a href="{% url 'app-index' %}" class="-m-1.5 p-1.5">
@@ -159,7 +215,7 @@
   
 
   <main>
-    <section class="bg-indigo-500 dark:bg-gradient-to-r dark:from-slate-900 dark:to-black md:flex md:items-center">
+    <section class="bg-indigo-500 z-10 dark:bg-gradient-to-r dark:from-slate-900 dark:to-black md:flex md:items-center">
       <div class="py-4 px-4 md:text-left text-center lg:py-16 md:w-3/4">
         <h1
           class="mb-4 text-4xl lg:px-10 font-extrabold tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-b from-white to-teal-200 md:text-5xl lg:text-6xl dark:via-fuchsia-400 dark:to-white">
@@ -185,8 +241,18 @@
           {% endif %}
         </div>
       </div>
-      <div class="py-4 px-4 lg:py-16">
-        <img src="{% static 'images/hero.png' %}" alt="Hero" loading="eager">
+      <div class="carousel">
+        <div class="carousel-inner">
+          {% load thumbnail %}
+          {% for object in object_list %}
+          <div class="carousel-item active">
+            <img src="{{object.image|thumbnail_url:'landscape'}}" alt="{{object.title}}" class="rounded-md">
+            <div class="caption">{{object.caption|truncatechars:40}}</div>
+          </div>
+          {% endfor %}
+        </div>
+        <button class="carousel-control prev">&#10094;</button>
+        <button class="carousel-control next">&#10095;</button>
       </div>
     </section>
 
@@ -246,6 +312,61 @@
   </footer>
 
   <script src="{% static 'js/dashboard.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+  const carouselInner = document.querySelector('.carousel-inner');
+  const items = document.querySelectorAll('.carousel-item');
+  const prevButton = document.querySelector('.carousel-control.prev');
+  const nextButton = document.querySelector('.carousel-control.next');
+  let index = 0;
+  let autoplayInterval;
+
+  // Function to move to the next slide
+  const nextSlide = () => {
+    index = (index + 1) % items.length;
+    updateCarousel();
+  };
+
+  // Function to move to the previous slide
+  const prevSlide = () => {
+    index = (index - 1 + items.length) % items.length;
+    updateCarousel();
+  };
+
+  // Update the carousel position
+  const updateCarousel = () => {
+    carouselInner.style.transform = `translateX(-${index * 100}%)`;
+  };
+
+  // Autoplay function
+  const startAutoplay = () => {
+    autoplayInterval = setInterval(nextSlide, 3000); // Change slide every 3 seconds
+  };
+
+  // Stop autoplay on user interaction
+  const stopAutoplay = () => {
+    clearInterval(autoplayInterval);
+  };
+
+  // Event listeners for buttons
+  nextButton.addEventListener('click', () => {
+    stopAutoplay();
+    nextSlide();
+  });
+
+  prevButton.addEventListener('click', () => {
+    stopAutoplay();
+    prevSlide();
+  });
+
+  // Start autoplay on page load
+  startAutoplay();
+
+  // Pause autoplay when hovering over the carousel
+  carouselInner.addEventListener('mouseenter', stopAutoplay);
+  carouselInner.addEventListener('mouseleave', startAutoplay);
+});
+  </script>
 </body>
 
 </html>

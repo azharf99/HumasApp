@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.flatpages',
     'alumni',
+    'galleries',
     'private',
     'students',
     'tahfidz',

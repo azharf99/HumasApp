@@ -32,10 +32,10 @@ class DashboardView(ListView):
         c["jumlah_alumni_tahun_ini"] = self.queryset.filter(graduate_year=timezone.now().year)
         c["jumlah_alumni_putra_tahun_ini"] = self.queryset.filter(gender="L", graduate_year=timezone.now().year)
         c["jumlah_alumni_putri_tahun_ini"] = self.queryset.filter(gender="P", graduate_year=timezone.now().year)
-        c["jumlah_alumni_universitas"] = self.queryset.exclude(undergraduate_university__exact="")
-        c["jumlah_alumni_putra_universitas"] = self.queryset.filter(gender="L").exclude(undergraduate_university__exact="")
+        c["jumlah_alumni_universitas"] = self.queryset.exclude(undergraduate_university__isnull=True)
+        c["jumlah_alumni_putra_universitas"] = self.queryset.filter(gender="L").exclude(undergraduate_university__isnull=True)
         c["jumlah_alumni_putra_non_univ"] = self.queryset.filter(gender="L", undergraduate_university="")
-        c["jumlah_alumni_putri_universitas"] = self.queryset.filter(gender="P").exclude(undergraduate_university__exact="")
+        c["jumlah_alumni_putri_universitas"] = self.queryset.filter(gender="P").exclude(undergraduate_university__isnull=True)
         c["jumlah_alumni_putri_non_univ"] = self.queryset.filter(gender="P", undergraduate_university="")
         c["logs"] = UserLog.objects.order_by("-created_at")[:10]
         c["sebaran_universitas_sarjana"] = self.queryset.exclude(undergraduate_university__in=[0, '']).values('undergraduate_university')\

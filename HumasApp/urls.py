@@ -19,11 +19,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import TemplateView
+from django.views.generic import ListView
+from galleries.models import Gallery
+
 from .views import DashboardView
 
+class IndexView(ListView):
+    model = Gallery
+
 urlpatterns = [
-    path('', TemplateView.as_view(template_name="index.html"), name='app-index'),
+    path('', IndexView.as_view(template_name="index.html"), name='app-index'),
     path('accounts/', include("users.urls")),
     path('admin/', admin.site.urls),
     path('alumni/', include("alumni.urls")),
@@ -32,6 +37,7 @@ urlpatterns = [
     path('private/', include("private.urls")),
     path('students/', include("students.urls")),
     path('tahfidz/', include("tahfidz.urls")),
+    path('galleries/', include("galleries.urls")),
 ]
 
 if not settings.TESTING:
