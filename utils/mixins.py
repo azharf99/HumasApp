@@ -82,9 +82,9 @@ class GeneralDownloadExcelView(GeneralAuthPermissionMixin):
         worksheet = workbook.add_worksheet()
         worksheet.write_row(0, 0, self.header_names)
         row = 1
-        for data in self.queryset.filter(Q(nis__icontains=query)|
+        for data in self.queryset.filter(Q(nis__icontains=query or "")|
                                          Q(name__icontains=query)|
-                                         Q(nisn__icontains=query)|
+                                         Q(nisn__icontains=query or "")|
                                          Q(group__icontains=query)|
                                          Q(graduate_year__icontains=query)|
                                          Q(undergraduate_university__icontains=query)|
