@@ -228,7 +228,7 @@ class AlumniDownloadExcelView(GeneralDownloadExcelView):
     app_name = 'Alumni'
     permission_required = 'alumni.view_alumni'
     template_name = 'alumni/download.html'
-    header_names = ['No', 'NIS', 'NISN', 'Nama', 'Angkatan', 'Tahun Lulus']
+    header_names = ['No', 'NIS', 'NISN', 'Nama', 'Angkatan', 'Tahun Lulus', 'Jurusan S1', 'Universitas S1', 'Jalur Masuk S1']
     filename = 'Daftar Alumni SMA IT Al Binaa.xlsx'
     queryset = Alumni.objects.all()
     

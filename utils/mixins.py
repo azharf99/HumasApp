@@ -92,12 +92,12 @@ class GeneralDownloadExcelView(GeneralAuthPermissionMixin):
                                          Q(undergraduate_university_entrance__icontains=query)|
                                          Q(undergraduate_department__icontains=query)):
                 if self.app_name == 'Alumni':
-                    worksheet.write_row(row, 0, [row, f"{data.nis}", f"{data.nisn}", data.name, data.group, data.graduate_year])
+                    worksheet.write_row(row, 0, [row, f"{data.nis}", f"{data.nisn}", data.name, data.group, data.graduate_year, data.undergraduate_department, data.undergraduate_university, data.undergraduate_university_entrance])
                 row += 1
         else:
             for data in self.queryset:
                 if self.app_name == 'Alumni':
-                    worksheet.write_row(row, 0, [row, f"{data.nis}", f"{data.nisn}", data.name, data.group, data.graduate_year])
+                    worksheet.write_row(row, 0, [row, f"{data.nis}", f"{data.nisn}", data.name, data.group, data.graduate_year, data.undergraduate_department, data.undergraduate_university, data.undergraduate_university_entrance])
                 row += 1
         worksheet.autofit()
         workbook.close()
