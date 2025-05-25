@@ -82,7 +82,8 @@ class GeneralDownloadExcelView(GeneralAuthPermissionMixin):
         worksheet = workbook.add_worksheet()
         worksheet.write_row(0, 0, self.header_names)
         row = 1
-        for data in self.queryset.filter(Q(nis__icontains=query or "")|
+        if query:
+            for data in self.queryset.filter(Q(nis__icontains=query or "")|
                                          Q(name__icontains=query)|
                                          Q(nisn__icontains=query or "")|
                                          Q(group__icontains=query)|
@@ -90,9 +91,14 @@ class GeneralDownloadExcelView(GeneralAuthPermissionMixin):
                                          Q(undergraduate_university__icontains=query)|
                                          Q(undergraduate_university_entrance__icontains=query)|
                                          Q(undergraduate_department__icontains=query)):
-            if self.app_name == 'Alumni':
-                worksheet.write_row(row, 0, [row, f"{data.nis}", f"{data.nisn}", data.name, data.group, data.graduate_year])
-            row += 1
+                if self.app_name == 'Alumni':
+                    worksheet.write_row(row, 0, [row, f"{data.nis}", f"{data.nisn}", data.name, data.group, data.graduate_year])
+                row += 1
+        else:
+            for data in self.queryset:
+                if self.app_name == 'Alumni':
+                    worksheet.write_row(row, 0, [row, f"{data.nis}", f"{data.nisn}", data.name, data.group, data.graduate_year])
+                row += 1
         worksheet.autofit()
         workbook.close()
         buffer.seek(0)
